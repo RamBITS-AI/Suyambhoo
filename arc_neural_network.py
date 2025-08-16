@@ -7,7 +7,7 @@ from torch.utils.data import Dataset, DataLoader
 import matplotlib.pyplot as plt
 from pprint import pprint
 
-NUM_OF_EPOCHS = 1000
+NUM_OF_EPOCHS = 3500
 
 class ARCDataset(Dataset):
     """Dataset class for ARC AGI training data"""
@@ -104,14 +104,14 @@ def load_arc_data(json_path):
         for pair in problem['train']:
             if first:
                 first_problem_id = problem_id
-                print("First Problem ID:", first_problem_id)
-                print("First Pair:")
-                pprint(pair)
+                # print("First Problem ID:", first_problem_id)
+                # print("First Pair:")
+                # pprint(pair)
             inp = one_hot_2d_matrix(pair['input'])
             out = one_hot_2d_matrix(pair['output'])
             if first:
-                print("First Input shape:", inp.shape)
-                print("First Output shape:", out.shape)
+                # print("First Input shape:", inp.shape)
+                # print("First Output shape:", out.shape)
                 first = False
             training_pairs[problem_id] = (inp, out)
         # Test data
@@ -179,7 +179,7 @@ def train_model(model, train_loader, num_epochs=100, device='cpu', start_epoch=0
     
     return losses
 
-def check_existing_checkpoint(checkpoint_path='/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt'):
+def check_existing_checkpoint(checkpoint_path):
     """Check if a checkpoint file exists and return the starting epoch"""
     import os
     print(f"Checking for checkpoint at: {checkpoint_path}")
@@ -201,7 +201,7 @@ def check_existing_checkpoint(checkpoint_path='/kaggle/input/suyambhoo/pytorch/a
         print(f"✗ No existing checkpoint found at {checkpoint_path}. Starting training from scratch.")
         return 0
 
-def load_best_model(model, checkpoint_path='/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt', device='cpu'):
+def load_best_model(model, checkpoint_path, device='cpu'):
     """Load the best model from checkpoint"""
     print(f"Loading model from: {checkpoint_path}")
     try:
@@ -280,7 +280,7 @@ def main():
     print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
     
     # Check for existing checkpoint from the specified path
-    checkpoint_path = '/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt'
+    checkpoint_path = '/kaggle/input/suyambhoo.v.4.0.0056/pytorch/4.0.0056/1/best_model.0056.chkpt'
     start_epoch = check_existing_checkpoint(checkpoint_path)
     
     # Initialize best_loss
@@ -305,7 +305,7 @@ def main():
     
     # Load best model for predictions (use the local best model that was saved during training)
     print("Loading best model for predictions...")
-    model = load_best_model(model, 'best_model.chkpt', device=device)
+    model, _ = load_best_model(model, '/kaggle/working/best_model.chkpt', device=device)
     
     # Generate predictions
     print("Generating predictions for test inputs...")
