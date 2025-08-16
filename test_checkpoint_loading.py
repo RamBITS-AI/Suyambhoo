@@ -27,8 +27,12 @@ def test_checkpoint_loading():
     if start_epoch > 0:
         print(f"\nResuming from epoch: {start_epoch}")
         # Load the model
-        model = load_best_model(model, checkpoint_path, device=device)
-        print("✓ Model successfully loaded and ready for training continuation")
+        model, best_loss = load_best_model(model, checkpoint_path, device=device)
+        if best_loss is not None:
+            print(f"✓ Model successfully loaded with best loss: {best_loss:.4f}")
+        else:
+            print("✓ Model successfully loaded (no previous loss available)")
+        print("✓ Ready for training continuation")
     else:
         print("\nNo checkpoint found - will start training from scratch")
     

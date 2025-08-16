@@ -121,33 +121,21 @@ def load_arc_data(json_path):
 
     return first_problem_id, training_pairs, testing_inputs
 
-def train_model(model, train_loader, num_epochs=100, device='cpu', start_epoch=0):
+def train_model(model, train_loader, num_epochs=100, device='cpu', start_epoch=0, best_loss=None):
     """Train the neural network"""
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=30, gamma=0.5)
     
-    # Load checkpoint if starting from a previous state
-    if start_epoch > 0:
-        try:
-            # Try to load from the specified path first
-            checkpoint_path = '/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt'
-            if torch.cuda.is_available():
-                checkpoint = torch.load(checkpoint_path)
-            else:
-                checkpoint = torch.load(checkpoint_path, map_location='cpu')
-            
-            model.load_state_dict(checkpoint['model_state_dict'])
-            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-            best_loss = checkpoint['loss']
-            print(f"Resuming training from epoch {start_epoch} with best loss: {best_loss:.4f}")
-            print(f"Loaded optimizer state from: {checkpoint_path}")
-        except Exception as e:
-            print(f"Error loading optimizer state from {checkpoint_path}: {e}")
-            print("Using fresh optimizer state.")
-            best_loss = float('inf')
-    else:
+    # Use provided best_loss or initialize to infinity
+    if best_loss is None:
         best_loss = float('inf')
+    
+    # If starting from a previous epoch, the model should already be loaded
+    if start_epoch > 0:
+        print(f"Resuming training from epoch {start_epoch} with best loss: {best_loss:.4f}")
+    else:
+        print(f"Starting training from scratch")
     
     model.train()
     losses = []
@@ -223,13 +211,14 @@ def load_best_model(model, checkpoint_path='/kaggle/input/suyambhoo/pytorch/arc-
             checkpoint = torch.load(checkpoint_path, map_location='cpu')
         
         model.load_state_dict(checkpoint['model_state_dict'])
-        print(f"✓ Loaded best model from epoch {checkpoint['epoch']} with loss: {checkpoint['loss']:.4f}")
+        best_loss = checkpoint['loss']
+        print(f"✓ Loaded best model from epoch {checkpoint['epoch']} with loss: {best_loss:.4f}")
         print(f"✓ Model loaded from: {checkpoint_path}")
-        return model
+        return model, best_loss
     except Exception as e:
         print(f"✗ Error loading model from {checkpoint_path}: {e}")
         print("Using randomly initialized model.")
-        return model
+        return model, None
 
 def generate_predictions(model, test_inputs, device='cpu'):
     """Generate predictions for test inputs"""
@@ -291,14 +280,18 @@ def main():
     print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
     
     # Check for existing checkpoint from the specified path
-    start_epoch = check_existing_checkpoint('/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt')
+    checkpoint_path = '/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt'
+    start_epoch = check_existing_checkpoint(checkpoint_path)
     
-    # If checkpoint exists, load the model state before training
+    # Initialize best_loss
+    best_loss = None
+    
+    # If checkpoint exists, load the model state and get the best loss
     if start_epoch > 0:
-        model = load_best_model(model, '/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt', device=device)
+        model, best_loss = load_best_model(model, checkpoint_path, device=device)
     
     # Train model
-    losses = train_model(model, train_loader, num_epochs=NUM_OF_EPOCHS, device=device, start_epoch=start_epoch)
+    losses = train_model(model, train_loader, num_epochs=NUM_OF_EPOCHS, device=device, start_epoch=start_epoch, best_loss=best_loss)
     
     # Plot training loss
     plt.figure(figsize=(10, 5))

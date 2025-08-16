@@ -7,7 +7,8 @@ This is my version of the solution for ARC-AGI
 The neural network can now automatically load the best model from a previous training session and continue training from where it left off.
 
 - **Automatic Checkpoint Detection**: The system checks for existing checkpoints at `/kaggle/input/suyambhoo/pytorch/arc-agi-2/1/best_model.chkpt`
-- **Resume Training**: If a checkpoint exists, training continues from the next epoch with the saved model state and optimizer state
+- **Resume Training**: If a checkpoint exists, training continues from the next epoch with the saved model state
+- **Clean Architecture**: The `train_model` function works with any pre-loaded model state without hardcoded paths
 - **Error Handling**: Graceful fallback to fresh training if checkpoint loading fails
 - **Progress Tracking**: Clear feedback about checkpoint status and training continuation
 
