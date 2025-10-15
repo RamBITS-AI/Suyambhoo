@@ -287,7 +287,7 @@ class PatternTransformer:
     
     def has_fillings_between_diagonals(self, arr: np.ndarray, boundary_element: int = 3):
         # Apply the filling
-        filled_arr = self.fill_between_diagonals(arr, boundary_element=3, fill_element=11)
+        filled_arr = self.fill_between_diagonals(arr, boundary_element=boundary_element, fill_element=11)
         return filled_arr, not np.array_equal(arr, filled_arr)
     
     def find_quadrilaterals(self, arr: np.ndarray, boundary_element: int = 2, valid_sum_of_inner_elements: int = 2):
@@ -364,7 +364,7 @@ class PatternTransformer:
                         if not np.all(arr[row_start+1:row_end, col_end] == boundary_element):
                             continue
                         # if inner values are 3 by any chance (like in the case of a plus-like formation)
-                        if np.sum(arr[row_start+1:row_end, col_start+1:col_end]) != valid_sum_of_inner_elements:
+                        if not np.isnan(valid_sum_of_inner_elements) and np.sum(arr[row_start+1:row_end, col_start+1:col_end]) != valid_sum_of_inner_elements:
                             continue
                         if row_end - row_start < 2 or col_end - col_start < 2:
                             continue
@@ -406,6 +406,7 @@ class PatternTransformer:
                         # Apply the filling
                         _, has_diagonal_fillings = self.has_fillings_between_diagonals(self.input_like, boundary_element=3)
                         self.has_diagonal_fillings = has_diagonal_fillings
+
                         if not self.has_diagonal_fillings:
                             # Greedy, score-driven pipeline construction
                             self.pipeline = []
@@ -534,8 +535,23 @@ class PatternTransformer:
             # 4) Diagonal Fillings
             elif self.has_diagonal_fillings:
                 pred = input.copy()
-                pred = self.fill_between_diagonals(pred, boundary_element=3, fill_element=4)
+                boundary_element = 3
+                quads = self.find_quadrilaterals_with_missing_corners(pred, boundary_element=boundary_element)
+                second_quads = self.find_quadrilaterals_with_missing_corners(self.output_like.copy(), boundary_element=boundary_element)
+                if len(second_quads) > 0 and len(quads) > 0:
+                    fill_element = second_quads[0]['contentarray'][0][0]  # 4
+                    print(fill_element)
+                    for quad in quads:
+                        row_start, row_end = quad['rows']
+                        col_start, col_end = quad['cols']
+                        if np.sum(pred[row_start+1:row_end, col_start+1:col_end]) == 0:
+                            pred[row_start+1:row_end, col_start+1:col_end] = fill_element  # 4
+                        # if int((row_start + row_end) / 2) * 2 == row_start + row_end:
+                        #     if int((col_start + col_end) / 2) * 2 == col_start + col_end:
+                        #         pred[int((row_start + row_end) / 2), int((col_start + col_end) / 2)] = center_element
                 return pred
+                # pred = self.fill_between_diagonals(pred, boundary_element=3, fill_element=4)
+                # return pred
             elif input.shape == output_like.shape:
                 for i in range(1, 10):
                     ci = input_like == i
@@ -573,9 +589,9 @@ class PatternTransformer:
                             pred = input.copy()
                             pred[p] = do
                             if not isinstance(cci, np.ndarray):
-                                pred[pp] = ddo
+                                pred[pp] = 7  # ddo
                             elif isinstance(ddx, np.ndarray):
-                                pred[ddx] = ddo
+                                pred[ddx] = 7  # ddo
                         except Exception as e:
                             print("Exception...", e)
                         return pred
@@ -700,9 +716,9 @@ def _prepare_submission(t_input, key, val, submission, solutions, index=-1):
     # if key != '00dbd492':
     #     continue
 
-    # pprint(test_input)
-    # pprint(train_in)
-    # pprint(train_out)
+    pprint(test_input)
+    pprint(train_in)
+    pprint(train_out)
     
     # Learn transformation from training example
     transformer = PatternTransformer()
@@ -717,6 +733,8 @@ def _prepare_submission(t_input, key, val, submission, solutions, index=-1):
     train_in = np.array(train_in)
 
     train_out = np.array(train_out)
+
+    pred_arr = pred
     
     pred = pred.tolist() if isinstance(pred, np.ndarray) else np.zeros_like(test_input)
 
@@ -727,11 +745,24 @@ def _prepare_submission(t_input, key, val, submission, solutions, index=-1):
     submission[key].append({"attempt_1": pred, 'attempt_2': pred_2})
 
     try:
-        if (np.array_equal(np.array(solutions[key][index]), pred)):
-            print("#"*80)
+        diff_rows, diff_cols = np.where(np.array(solutions[key][index]) != pred_arr)
+        if len(diff_rows) == 0:
+            print("$"*80)
             print("Success!")
             pprint(pred)
-            print("#"*80)
+            print("$"*80)
+        else:
+            # Print results
+            print("@"*80)
+            print("Differing positions (row, col):")
+            for row, col in zip(diff_rows, diff_cols):
+                print(f"({row}, {col})")
+            print("@"*80)
+            pprint(pred)
+            print("@"*80)
+            pprint(solutions[key][index])
+            print("@"*80)
+
     except Exception as e:
         print("Index:", index)
         print("EXX:", e)
