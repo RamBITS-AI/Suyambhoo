@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 from pprint import pprint
 
 
@@ -26,15 +26,16 @@ class PatternTransformer:
         self.rotation_k = 0  # number of 90deg rotations
         self.flip_h = False
         self.flip_v = False
-        # Upscaling factors (>=1). When ==1 and pool factors >1, that means shrinking.
-        self.row_repeat = 1
-        self.col_repeat = 1
-        # Downscaling factors (>=1). When >1 we will pool blocks with mode.
-        self.row_pool = 1
-        self.col_pool = 1
-        # Translation placement offsets into target output canvas
-        self.offset_row = 0
-        self.offset_col = 0
+        # Super Kron Broadcast
+        self.skb = False
+        # Fill Quadrilaterals
+        self.have_to_fill_quadrilaterals = False
+        # Tile and Rotate
+        self.t_n_r = False
+        self.tile_by = ()  # (3, 3)
+        self.rows_to_roll = []  # [2, 3]
+        # Fill Between Diagonals
+        self.has_diagonal_fillings = False
         # Learned target output shape (from training output_like)
         self.target_h = None
         self.target_w = None
@@ -47,284 +48,332 @@ class PatternTransformer:
         vals, counts = np.unique(values, return_counts=True)
         return int(vals[np.argmax(counts)])
 
+    def apply_geom(self, arr: np.ndarray, rot_k: int, fh: bool, fv: bool) -> np.ndarray:
+        x = np.rot90(arr, k=rot_k)
+        if fh:
+            x = np.fliplr(x)
+        if fv:
+            x = np.flipud(x)
+        return x
+
+    def super_kron_broadcast(self, arr: np.ndarray) -> np.ndarray:
+        b = arr > 0
+        if len(arr[b]) == 0:
+            return arr
+        b = arr[b][0]
+        b = arr == b
+        b_arr = arr.copy()
+        b_arr[b] = 1
+        arr = np.kron(arr, b_arr)
+        return arr
+
+    def tile_and_roll(self, arr: np.ndarray, shift: int = 1, axis: int = 1) -> np.ndarray:
+        arr = np.tile(arr, self.tile_by)
+        arr[self.rows_to_roll] = np.roll(arr[self.rows_to_roll], shift=shift, axis=axis)
+        return arr
+
+    def fill_between_diagonals(self, arr: np.ndarray, boundary_element: int = 3, fill_element: int = 4):
+        """
+        Fills positions 'in between' diagonals (or straight lines) formed by 3's with 4's.
+        Uses local pattern matching for cross, and diagonal L-bends.
+        """
+        rows, cols = arr.shape
+        output_arr = arr.copy()
+        
+        for r in range(rows):
+            for c in range(cols):
+                if output_arr[r, c] != 0:
+                    continue
+                # Get neighbors (True if 3)
+                up = self.get_neighbor(output_arr, r, c, -1, 0, boundary_element)
+                down = self.get_neighbor(output_arr, r, c, 1, 0, boundary_element)
+                left = self.get_neighbor(output_arr, r, c, 0, -1, boundary_element)
+                right = self.get_neighbor(output_arr, r, c, 0, 1, boundary_element)
+                up_right = self.get_neighbor(output_arr, r, c, -1, 1, boundary_element)
+                down_left = self.get_neighbor(output_arr, r, c, 1, -1, boundary_element)
+                up_left = self.get_neighbor(output_arr, r, c, -1, -1, boundary_element)
+                down_right = self.get_neighbor(output_arr, r, c, 1, 1, boundary_element)
+                
+                filled = False
+                
+                # Vertical cross (fully bounded orthogonally)
+                if up and down and left and right:
+                    filled = True
+                
+                # Diagonal L-bend type 1: bottom-left turn (\ direction)
+                elif left and down and up_right and not up and not right:
+                    filled = True
+                
+                # Diagonal L-bend type 2: top-right turn (/ direction)
+                elif up and right and down_left and not down and not left:
+                    filled = True
+                
+                # Mirror for bottom-right turn (for \ extensions)
+                elif right and down and up_left and not up and not left:
+                    filled = True
+                
+                # Mirror for top-left turn (for / extensions)
+                elif up and left and down_right and not down and not right:
+                    filled = True
+                
+                if filled:
+                    output_arr[r, c] = fill_element
+        
+        return output_arr
+    
+    def get_neighbor(self, arr, r, c, dr, dc, boundary_element: int = 3):
+        nr, nc = r + dr, c + dc
+        if nr < arr.shape[0] and nc < arr.shape[1]:
+            # print(r, c, nr, nc, arr[nr, nc], boundary_element, arr[nr, nc] == boundary_element)
+            return arr[nr, nc] == boundary_element
+        return False
+    
+    def has_fillings_between_diagonals(self, arr: np.ndarray, boundary_element: int = 3):
+        # Apply the filling
+        filled_arr = self.fill_between_diagonals(arr, boundary_element=3, fill_element=11)
+        return filled_arr, not np.array_equal(arr, filled_arr)
+    
+    def find_quadrilaterals(self, arr: np.ndarray, boundary_element: int = 2, valid_sum_of_inner_elements: int = 2):
+        """
+        Identifies axis-aligned rectangular quadrilaterals where the perimeter is entirely 3's.
+        
+        Returns a list of dictionaries, each containing:
+        - 'rows': tuple (start_row, end_row)
+        - 'cols': tuple (start_col, end_col)
+        - 'subarray': the subarray of the quadrilateral
+        """
+        rows, cols = arr.shape
+        quadrilaterals = []
+        
+        for row_start in range(rows):
+            for row_end in range(row_start + 1, rows):  # Ensure height >= 2
+                for col_start in range(cols):
+                    for col_end in range(col_start + 1, cols):  # Ensure width >= 2
+                        # Check top row
+                        if not np.all(arr[row_start, col_start:col_end+1] == boundary_element):
+                            continue
+                        # Check bottom row
+                        if not np.all(arr[row_end, col_start:col_end+1] == boundary_element):
+                            continue
+                        # Check left column
+                        if not np.all(arr[row_start:row_end+1, col_start] == boundary_element):
+                            continue
+                        # Check right column
+                        if not np.all(arr[row_start:row_end+1, col_end] == boundary_element):
+                            continue
+                        # if inner values are non-zero by any chance (like in the case of a all 9 elements are 3's)
+                        if np.isnan(valid_sum_of_inner_elements) and np.sum(arr[row_start+1:row_end, col_start+1:col_end]) != valid_sum_of_inner_elements:
+                            continue
+                        if row_end - row_start < 2 or col_end - col_start < 2:
+                            continue
+                        # Valid quadrilateral
+                        quad = {
+                            'rows': (row_start, row_end),
+                            'cols': (col_start, col_end),
+                            'subarray': arr[row_start:row_end+1, col_start:col_end+1],
+                            'contentarray': arr[row_start+1:row_end, col_start+1:col_end]
+                        }
+                        quadrilaterals.append(quad)
+        
+        return quadrilaterals
+
+    def find_quadrilaterals_with_missing_corners(self, arr: np.ndarray, boundary_element: int = 3, valid_sum_of_inner_elements = np.nan):
+        """
+        Identifies axis-aligned rectangular quadrilaterals (height/width >=3) where the perimeter is entirely 3's,
+        allowing for missing 3's at the four corners.
+        
+        Returns a list of dictionaries, each containing:
+        - 'rows': tuple (start_row, end_row)
+        - 'cols': tuple (start_col, end_col)
+        - 'subarray': the subarray of the quadrilateral
+        """
+        rows, cols = arr.shape
+        quadrilaterals = []
+        
+        for row_start in range(rows):
+            for row_end in range(row_start + 2, rows):  # Ensure height >= 3
+                for col_start in range(cols):
+                    for col_end in range(col_start + 2, cols):  # Ensure width >= 3
+                        # Check top row, excluding corners
+                        if not np.all(arr[row_start, col_start+1:col_end] == boundary_element):
+                            continue
+                        # Check bottom row, excluding corners
+                        if not np.all(arr[row_end, col_start+1:col_end] == boundary_element):
+                            continue
+                        # Check left column, excluding corners
+                        if not np.all(arr[row_start+1:row_end, col_start] == boundary_element):
+                            continue
+                        # Check right column, excluding corners
+                        if not np.all(arr[row_start+1:row_end, col_end] == boundary_element):
+                            continue
+                        # if inner values are 3 by any chance (like in the case of a plus-like formation)
+                        if np.sum(arr[row_start+1:row_end, col_start+1:col_end]) != valid_sum_of_inner_elements:
+                            continue
+                        if row_end - row_start < 2 or col_end - col_start < 2:
+                            continue
+                        # Valid quadrilateral
+                        quad = {
+                            'rows': (row_start, row_end),
+                            'cols': (col_start, col_end),
+                            'subarray': arr[row_start:row_end+1, col_start:col_end+1],
+                            'contentarray': arr[row_start+1:row_end, col_start+1:col_end]
+                        }
+                        quadrilaterals.append(quad)
+        
+        return quadrilaterals
+
     def fit(self, input_like, output_like) -> None:
-        input_like = np.array(input_like)
-        output_like = np.array(output_like)
-
-        # Default background as the most common color in output_like
-        self.learned_background = self._mode(output_like)
-
-        in_h, in_w = input_like.shape
-        out_h, out_w = output_like.shape
-        self.target_h = out_h
-        self.target_w = out_w
-
-        # Search over geometric transforms and integer scaling to best align to output_like
-        rotations = [0, 1, 2, 3]  # multiples of 90 degrees
-        flip_options = [(False, False), (True, False), (False, True), (True, True)]
-
-        def apply_geom(arr: np.ndarray, rot_k: int, fh: bool, fv: bool) -> np.ndarray:
-            x = np.rot90(arr, k=rot_k)
-            if fh:
-                x = np.fliplr(x)
-            if fv:
-                x = np.flipud(x)
-            return x
-
-        def upsample(arr: np.ndarray, rr: int, cc: int) -> np.ndarray:
-            if rr == 1 and cc == 1:
-                return arr
-            # nearest-neighbor upscaling using np.kron
-            return np.kron(arr, np.ones((rr, cc), dtype=arr.dtype))
-
-        def block_mode_reduce(arr: np.ndarray, pr: int, pc: int) -> np.ndarray:
-            if pr == 1 and pc == 1:
-                return arr
-            h, w = arr.shape
-            assert h % pr == 0 and w % pc == 0
-            new_h = h // pr
-            new_w = w // pc
-            # reshape into blocks and take mode per block
-            reshaped = arr.reshape(new_h, pr, new_w, pc).swapaxes(1, 2).reshape(new_h * new_w, pr * pc)
-            out_vals = []
-            for i in range(reshaped.shape[0]):
-                block = reshaped[i]
-                vals, counts = np.unique(block, return_counts=True)
-                out_vals.append(int(vals[np.argmax(counts)]))
-            return np.array(out_vals, dtype=arr.dtype).reshape(new_h, new_w)
-
-        def score_map(a: np.ndarray, b: np.ndarray) -> float:
-            # percentage of equal cells
-            if a.shape != b.shape:
-                return -1.0
-            return float(np.mean(a == b))
-
-        best = {
-            "score": -1.0,
-            "rot": 0,
-            "fh": False,
-            "fv": False,
-            "rr": 1,
-            "cc": 1,
-            "pr": 1,
-            "pc": 1,
-            "dy": 0,
-            "dx": 0,
-            "map": None,
-        }
-
-        for rot in rotations:
-            for fh, fv in flip_options:
-                geom = apply_geom(input_like, rot, fh, fv)
-                gh, gw = geom.shape
-
-                # Determine scaling to reach output shape: either up or down per axis
-                # Rows
-                rr, pr = 1, 1
-                if out_h % gh == 0:
-                    rr = out_h // gh
-                elif gh % out_h == 0:
-                    pr = gh // out_h
-                else:
-                    continue  # cannot match rows exactly
-
-                # Cols
-                cc, pc = 1, 1
-                if out_w % gw == 0:
-                    cc = out_w // gw
-                elif gw % out_w == 0:
-                    pc = gw // out_w
-                else:
-                    continue  # cannot match cols exactly
-
-                # Apply scaling
-                scaled = geom
-                if rr > 1 or cc > 1:
-                    scaled = upsample(scaled, rr, cc)
-                if pr > 1 or pc > 1:
-                    scaled = block_mode_reduce(scaled, pr, pc)
-
-                # Placement search (translations, padding, cropping) into output_like.shape
-                sh, sw = scaled.shape
-                tgt_h, tgt_w = output_like.shape
-
-                # Compute dy range
-                if sh < tgt_h:
-                    dy_range = range(0, tgt_h - sh + 1)
-                elif sh > tgt_h:
-                    dy_range = range(-(sh - tgt_h), 1)  # negative means cropping from top
-                else:
-                    k = min(3, max(0, tgt_h - 1))
-                    dy_range = range(-k, k + 1)
-
-                # Compute dx range
-                if sw < tgt_w:
-                    dx_range = range(0, tgt_w - sw + 1)
-                elif sw > tgt_w:
-                    dx_range = range(-(sw - tgt_w), 1)
-                else:
-                    k = min(3, max(0, tgt_w - 1))
-                    dx_range = range(-k, k + 1)
-
-                def place_with_offset(src: np.ndarray, dy: int, dx: int, target_shape, bg: int) -> np.ndarray:
-                    th, tw = target_shape
-                    canvas = np.full((th, tw), bg, dtype=src.dtype)
-                    # Determine overlapping ranges
-                    sy_start = max(0, -dy)
-                    sx_start = max(0, -dx)
-                    sy_end = min(src.shape[0], th - dy)
-                    sx_end = min(src.shape[1], tw - dx)
-                    if sy_start >= sy_end or sx_start >= sx_end:
-                        return canvas
-                    ty_start = max(0, dy)
-                    tx_start = max(0, dx)
-                    ty_end = ty_start + (sy_end - sy_start)
-                    tx_end = tx_start + (sx_end - sx_start)
-                    canvas[ty_start:ty_end, tx_start:tx_end] = src[sy_start:sy_end, sx_start:sx_end]
-                    return canvas
-
-                for dy in dy_range:
-                    for dx in dx_range:
-                        placed = place_with_offset(scaled, dy, dx, output_like.shape, self.learned_background)
-
-                        # Learn color map from placed to output
-                        cmap = {}
-                        for v in range(10):
-                            m = (placed == v)
-                            if np.any(m):
-                                cmap[v] = self._mode(output_like[m])
-                        # Apply map to evaluate
-                        tmp = placed.copy()
-                        for v in range(10):
-                            if v in cmap:
-                                tmp[placed == v] = cmap[v]
-                        s = score_map(tmp, output_like)
-                        if s > best["score"]:
-                            best.update({
-                                "score": s,
-                                "rot": rot,
-                                "fh": fh,
-                                "fv": fv,
-                                "rr": rr,
-                                "cc": cc,
-                                "pr": pr,
-                                "pc": pc,
-                                "dy": dy,
-                                "dx": dx,
-                                "map": cmap,
-                            })
-
-        if best["score"] >= 0:
-            self.rotation_k = best["rot"]
-            self.flip_h = best["fh"]
-            self.flip_v = best["fv"]
-            self.row_repeat = best["rr"]
-            self.col_repeat = best["cc"]
-            self.row_pool = best["pr"]
-            self.col_pool = best["pc"]
-            self.offset_row = best["dy"]
-            self.offset_col = best["dx"]
-            self.color_map = best["map"]
-            return
-
-        # Fallbacks if nothing matched exactly
-        # Try pure color map when shapes match
-        if input_like.shape == output_like.shape:
-            mapping = {}
-            for v in range(10):
-                mask = (input_like == v)
-                if np.any(mask):
-                    mapping[v] = self._mode(output_like[mask])
-            self.color_map = mapping
-            self.rotation_k = 0
-            self.flip_h = False
-            self.flip_v = False
-            self.row_repeat = 1
-            self.col_repeat = 1
-            self.row_pool = 1
-            self.col_pool = 1
-            return
-
-        # Last resort: overlapping region color map
-        min_h = min(in_h, out_h)
-        min_w = min(in_w, out_w)
-        overlap_in = input_like[:min_h, :min_w]
-        overlap_out = output_like[:min_h, :min_w]
-        mapping = {}
-        for v in range(10):
-            mask = (overlap_in == v)
-            if np.any(mask):
-                mapping[v] = self._mode(overlap_out[mask])
-        self.color_map = mapping if mapping else None
-        self.rotation_k = 0
-        self.flip_h = False
-        self.flip_v = False
-        self.row_repeat = 1
-        self.col_repeat = 1
-        self.row_pool = 1
-        self.col_pool = 1
+        try:
+            self.input_like = np.array(input_like)
+            self.output_like = np.array(output_like)
+    
+            # Default background as the most common color in self.output_like
+            self.learned_background = self._mode(self.output_like)
+    
+            in_h, in_w = self.input_like.shape
+            out_h, out_w = self.output_like.shape
+            self.target_h = out_h
+            self.target_w = out_w
+    
+            # Search over geometric transforms and integer scaling to best align to self.output_like
+            rotations = [0, 1, 2, 3]  # multiples of 90 degrees
+            flip_options = [(False, False), (True, False), (False, True), (True, True)]
+    
+            # for rot in rotations:
+            #     for fh, fv in flip_options:
+            #         geom = apply_geom(self.input_like, rot, fh, fv)
+            #         gh, gw = geom.shape
+    
+            self.skb = np.array_equal(self.output_like, self.super_kron_broadcast(self.input_like))
+    
+            if not self.skb:
+                self.have_to_fill_quadrilaterals = len(self.find_quadrilaterals(self.input_like, boundary_element=2, valid_sum_of_inner_elements=2)) > 0
+                if not self.have_to_fill_quadrilaterals:
+                    self.tile_by = (3, 3)
+                    self.rows_to_roll = [2, 3]
+                    self.t_n_r = np.array_equal(self.output_like, self.tile_and_roll(self.input_like))
+                    if not self.t_n_r:
+                        self.tile_by = ()
+                        self.rows_to_roll = []
+                        # Apply the filling
+                        _, has_diagonal_fillings = self.has_fillings_between_diagonals(self.input_like, boundary_element=3)
+                        self.has_diagonal_fillings = has_diagonal_fillings
+        except Exception as e:
+            print("Exception... - ", e)
 
     def predict(self, input_matrix) -> np.ndarray:
-        input_matrix = np.array(input_matrix)
+        output_like = self.output_like
+        pred = np.zeros_like(output_like)
+        try:
+            input = np.array(input_matrix)
+            input_like = self.input_like
 
-        # 1) Geometric transform
-        x = np.rot90(input_matrix, k=self.rotation_k)
-        if self.flip_h:
-            x = np.fliplr(x)
-        if self.flip_v:
-            x = np.flipud(x)
+            b = output_like == input_like[0][0]
 
-        # 2) Integer zoom (upsample)
-        if self.row_repeat > 1 or self.col_repeat > 1:
-            x = np.kron(x, np.ones((self.row_repeat, self.col_repeat), dtype=x.dtype))
-
-        # 3) Integer shrink (block-mode reduce)
-        if self.row_pool > 1 or self.col_pool > 1:
-            h, w = x.shape
-            # guard to avoid crash if not divisible; if not, crop from bottom/right minimally
-            pr = self.row_pool
-            pc = self.col_pool
-            h_adj = (h // pr) * pr
-            w_adj = (w // pc) * pc
-            if h_adj != h or w_adj != w:
-                x = x[:h_adj, :w_adj]
-            new_h = x.shape[0] // pr
-            new_w = x.shape[1] // pc
-            reshaped = x.reshape(new_h, pr, new_w, pc).swapaxes(1, 2).reshape(new_h * new_w, pr * pc)
-            out_vals = []
-            for i in range(reshaped.shape[0]):
-                block = reshaped[i]
-                vals, counts = np.unique(block, return_counts=True)
-                out_vals.append(int(vals[np.argmax(counts)]))
-            x = np.array(out_vals, dtype=x.dtype).reshape(new_h, new_w)
-
-        # 4) Placement into learned target canvas size using learned offsets
-        if self.target_h is not None and self.target_w is not None:
-            th, tw = self.target_h, self.target_w
-            bg = self.learned_background if self.learned_background is not None else 0
-            canvas = np.full((th, tw), bg, dtype=x.dtype)
-            dy, dx = self.offset_row, self.offset_col
-            sy_start = max(0, -dy)
-            sx_start = max(0, -dx)
-            sy_end = min(x.shape[0], th - dy)
-            sx_end = min(x.shape[1], tw - dx)
-            if sy_start < sy_end and sx_start < sx_end:
-                ty_start = max(0, dy)
-                tx_start = max(0, dx)
-                ty_end = ty_start + (sy_end - sy_start)
-                tx_end = tx_start + (sx_end - sx_start)
-                canvas[ty_start:ty_end, tx_start:tx_end] = x[sy_start:sy_end, sx_start:sx_end]
-            x = canvas
-
-        # 5) Color mapping
-        if self.color_map is not None:
-            mapped = x.copy()
-            for v in range(10):
-                if v in self.color_map:
-                    mapped[x == v] = self.color_map[v]
-            x = mapped
-
-        return x
+            # 1) Super Kron Broadcast
+            if self.skb:
+                return self.super_kron_broadcast(input.copy())
+            # 2) Fill Quadrilaterals
+            elif self.have_to_fill_quadrilaterals:
+                pred = input.copy()
+                boundary_element = 2
+                center_element = 2
+                quads = self.find_quadrilaterals(pred, boundary_element=boundary_element, valid_sum_of_inner_elements=center_element)
+                second_quads = self.find_quadrilaterals(output_like.copy(), boundary_element=boundary_element)
+                if len(second_quads) > 0 and len(quads) > 0:
+                    fill_element = second_quads[0]['contentarray'][0][0]
+                    for quad in quads:
+                        row_start, row_end = quad['rows']
+                        col_start, col_end = quad['cols']
+                        pred[row_start+1:row_end, col_start+1:col_end] = fill_element  # 8
+                        if int((row_start + row_end) / 2) * 2 == row_start + row_end:
+                            if int((col_start + col_end) / 2) * 2 == col_start + col_end:
+                                pred[int((row_start + row_end) / 2), int((col_start + col_end) / 2)] = center_element
+                return pred
+            # 3) Tile And Roll
+            elif self.t_n_r:
+                return self.tile_and_roll(input.copy())
+            # 4) Diagonal Fillings
+            elif self.has_diagonal_fillings:
+                pred = input.copy()
+                pred = self.fill_between_diagonals(pred, boundary_element=3, fill_element=4)
+                return pred
+            elif input.shape == output_like.shape:
+                for i in range(1, 10):
+                    ci = input_like == i
+                    if np.any(ci):
+                        cix = ci.copy()
+                        ccix = np.nan
+                        ci = i
+                        for j in range(1, 10):
+                            if j == i:
+                                continue
+                            cci = input_like == j
+                            if np.any(cci):
+                                ccix = cci.copy()
+                                cci = j
+                                break
+                        try:
+                            do = output_like[cix]
+                            do = do[0]
+                            ddx = np.nan
+                            if isinstance(ccix, np.ndarray):
+                                ddo = output_like[ccix]
+                                ddo = ddo[0]
+                            else:
+                                for j in range(1, 10):
+                                    if j == ci:
+                                        continue
+                                    ddo = output_like == j
+                                    if np.any(ddo):
+                                        ddx = ddo.copy()
+                                        ddo = j
+                                        break
+                            p = input == ci
+                            if not isinstance(cci, np.ndarray):
+                                pp = input == cci
+                            pred = input.copy()
+                            pred[p] = do
+                            if not isinstance(cci, np.ndarray):
+                                pred[pp] = ddo
+                            elif isinstance(ddx, np.ndarray):
+                                pred[ddx] = ddo
+                        except Exception as e:
+                            print("Exception...", e)
+                        return pred
+            elif input.shape[1] == output_like.shape[1]:
+                for i in range(1, 10):
+                    ci = input_like == i
+                    if np.any(ci):
+                        ci = np.vstack([ci, ci[:output_like.shape[0]-input.shape[0],:]])
+                        if output_like.shape != ci.shape:
+                            break
+                        do = output_like[ci]
+                        do = do[0]
+                        for j in range(1, 10):
+                            p = input == j
+                            if output_like.shape[0] > input.shape[0]:
+                                p = np.vstack([p, p[:output_like.shape[0]-input.shape[0],:]])
+                            elif input.shape[0] > output_like.shape[0]:
+                                p = p[:input.shape[0]-output_like.shape[0]]
+                            if np.any(p):
+                                pred[p] = do
+                                break
+                return pred
+            elif input.shape[0] > output_like.shape[0] and input.shape[1] > output_like.shape[1]:
+                pred = input.copy()
+                # Find the quadrilaterals
+                quads = self.find_quadrilaterals_with_missing_corners(pred, 3)
+                for quad in quads:
+                    row_start, row_end = quad['rows']
+                    col_start, col_end = quad['cols']
+                    pred[row_start+1:row_end, col_start+1:col_end] = 4
+                return pred
+            else:
+                return np.zeros([self.target_h, self.target_w])
+        except Exception as e:
+            print("Exception! - ", e)
+        return pred
 
 def load_arc_data(json_path):
     """Load ARC AGI data from JSON file"""
@@ -353,9 +402,12 @@ def load_arc_data(json_path):
             if first:
                 pprint(training_pairs)
         # Test data
+        testing_inputs[problem_id] = []
         for test_case in problem['test']:
-            inp = test_case['input']
-            testing_inputs[problem_id] = inp
+            inp = np.array(test_case['input'])
+            testing_inputs[problem_id].append(inp)
+
+        if len(testing_inputs[problem_id]) == 1: testing_inputs[problem_id] = testing_inputs[problem_id][0]
 
     return first_problem_id, training_pairs, testing_inputs
 
@@ -365,6 +417,81 @@ def build_output(input, input_like, output_like):
     transformer.fit(input_like, output_like)
     return transformer.predict(input)
 
+def _prepare_submission(t_input, key, val, submission, solutions, index=-1):
+    test_input = t_input
+    train_in, train_out = val
+
+    # if key != '00dbd492':
+    #     continue
+
+    # pprint(test_input)
+    # pprint(train_in)
+    # pprint(train_out)
+    
+    # Learn transformation from training example
+    transformer = PatternTransformer()
+
+    transformer.fit(train_in, train_out)
+
+    # Predict on the provided test input
+    pred = transformer.predict(test_input)
+
+    test_input = np.array(test_input)
+
+    train_in = np.array(train_in)
+
+    train_out = np.array(train_out)
+    
+    pred = pred.tolist() if isinstance(pred, np.ndarray) else np.zeros_like(test_input)
+
+    pred_2 = np.zeros_like(test_input) if test_input.shape == train_in.shape and train_in.shape == train_out.shape else np.zeros_like(train_out) if test_input.shape != train_in.shape and train_in.shape == train_out.shape else np.zeros_like(test_input)
+
+    pred_2 = pred_2.tolist()
+    
+    submission[key].append({"attempt_1": pred, 'attempt_2': pred_2})
+
+    try:
+        # if (np.array_equal(np.array(solutions[key][index]), pred)):
+        print("#"*80)
+        print("Success!")
+        pprint(pred)
+        print("#"*80)
+    except Exception as e:
+        print("Index:", index)
+        print("EXX:", e)
+        print("T-Input:", t_input)
+        print("Solutions:")
+        for i, solution in enumerate(solutions[key]):
+            print(f"solution[{key}][{i}]:", solution)
+        print("Preds:", pred)
+    # if counter < 7 and counter > 8:
+    #     continue
+
+    # # plt.pcolor(test_input)
+    # plt.imshow(test_input, cmap=plt.cm.hot)
+    # plt.colorbar()
+    # plt.savefig(f'{counter}_test_input.png', dpi=300, bbox_inches='tight')  # dpi for resolution, bbox_inches to fit content
+    # plt.close()
+
+    # # plt.pcolor(train_in)
+    # plt.imshow(train_in, cmap=plt.cm.hot)
+    # plt.colorbar()
+    # plt.savefig(f'{counter}_train_in.png', dpi=300, bbox_inches='tight')  # dpi for resolution, bbox_inches to fit content
+    # plt.close()
+
+    # # plt.pcolor(train_out)
+    # plt.imshow(train_out, cmap=plt.cm.hot)
+    # plt.colorbar()
+    # plt.savefig(f'{counter}_train_out.png', dpi=300, bbox_inches='tight')  # dpi for resolution, bbox_inches to fit content
+    # plt.close()
+    
+def prepare_submission_list(submission, test_input_list, key, val, solutions):
+    for i, test_input in enumerate(test_input_list):
+        _prepare_submission(test_input, key, val, submission, solutions, i)
+
+def prepare_submission(submission, test_input, key, val, solutions):
+    _prepare_submission(test_input, key, val, submission, solutions)
+    
 def main():
     # Set device
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -372,32 +499,47 @@ def main():
     
     # Load data
     print("Loading ARC AGI data...")
-    first_problem_id, training_pairs, testing_inputs = load_arc_data('/kaggle/input/arc-prize-2025/arc-agi_test_challenges.json')
+    first_problem_id, training_pairs, testing_inputs = load_arc_data('tc.json')
     print(f"Loaded {len(training_pairs)} training pairs and {len(testing_inputs)} test inputs.")
     submission = {}
     counter = 0
+
+    # print(testing_inputs)
+
+    # print("#"*80)
+    # for key, testing_input in testing_inputs.items():
+    #     print(key, f"--{len(np.array(testing_input).shape)}--")
+    # print("#"*80)
+
+    solutions = {}
+    
+    # with open('/kaggle/input/arc-prize-2025/arc-agi_training_solutions.json', 'r') as f:
+    #     solutions = json.load(f)
+
+    # with open('/kaggle/input/arc-prize-2025/arc-agi_training_challenges.json', 'r') as f:
+    #     tc = json.load(f)
+    
     for key, val in training_pairs.items():
         print(key)
         test_input = testing_inputs[key]
-        train_in, train_out = val
-
-        # Learn transformation from training example
-        transformer = PatternTransformer()
-        transformer.fit(train_in, train_out)
-
-        # Predict on the provided test input
-        pred = transformer.predict(test_input)
-
-        submission[key] = [{"attempt_1": pred.tolist() if isinstance(pred, np.ndarray) else []}]
+        submission[key] = []
+        # print(len(np.array(test_input).shape), "LEN!", np.array(test_input).shape[1])
+        if isinstance(test_input, list):
+            print("IsList = True")
+            prepare_submission_list(submission, test_input, key, val, solutions)
+        else:
+            print("IsList = False")
+            print(np.array(test_input).shape)
+            prepare_submission(submission, test_input, key, val, solutions)
         counter += 1
-        print("#"*40)
-        print("Success!")
-        pprint(pred)
-        print("#"*40)
+
     # Write the data to a file with pretty-printing
     with open("submission.json", "w") as submission_file:
-        json.dump(submission, submission_file, indent=4)
+        json.dump(submission, submission_file)
+    # with open("tc.json", "w") as tc_file:
+    #     json.dump(tc, tc_file)
     print(f"Finished - {counter}!")
+    # print(submission)
 
 if __name__ == "__main__":
     main()
