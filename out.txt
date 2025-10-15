@@ -1,0 +1,3022 @@
+Using device: cpu
+Loading ARC AGI data...
+Loaded 1000 training pairs and 1000 test inputs.
+00576224
+IsList = False
+(2, 2)
+################################################################################
+Success!
+[[3, 2, 3, 2, 3, 2],
+ [7, 8, 7, 8, 7, 8],
+ [2, 3, 2, 3, 2, 3],
+ [8, 7, 8, 7, 8, 7],
+ [3, 2, 3, 2, 3, 2],
+ [7, 8, 7, 8, 7, 8]]
+################################################################################
+007bbfb7
+IsList = False
+(3, 3)
+################################################################################
+Success!
+[[7, 0, 7, 0, 0, 0, 7, 0, 7],
+ [7, 0, 7, 0, 0, 0, 7, 0, 7],
+ [7, 7, 0, 0, 0, 0, 7, 7, 0],
+ [7, 0, 7, 0, 0, 0, 7, 0, 7],
+ [7, 0, 7, 0, 0, 0, 7, 0, 7],
+ [7, 7, 0, 0, 0, 0, 7, 7, 0],
+ [7, 0, 7, 7, 0, 7, 0, 0, 0],
+ [7, 0, 7, 7, 0, 7, 0, 0, 0],
+ [7, 7, 0, 7, 7, 0, 0, 0, 0]]
+################################################################################
+009d5c81
+IsList = False
+(14, 14)
+00d62c1b
+IsList = False
+(20, 20)
+00dbd492
+IsList = False
+(20, 20)
+017c7c7b
+IsList = False
+(6, 3)
+################################################################################
+Success!
+[[2, 2, 2],
+ [0, 2, 0],
+ [0, 2, 0],
+ [2, 2, 2],
+ [0, 2, 0],
+ [0, 2, 0],
+ [2, 2, 2],
+ [0, 2, 0],
+ [0, 2, 0]]
+################################################################################
+025d127b
+IsList = False
+(10, 10)
+03560426
+IsList = False
+(10, 10)
+045e512c
+IsList = False
+(21, 21)
+0520fde7
+IsList = False
+(3, 7)
+05269061
+IsList = False
+(7, 7)
+05a7bcf2
+IsList = False
+(30, 30)
+05f2a901
+IsList = False
+(11, 10)
+0607ce86
+IsList = False
+(24, 22)
+0692e18c
+IsList = False
+(3, 3)
+06df4c85
+IsList = False
+(26, 26)
+070dd51e
+IsList = False
+(20, 20)
+08ed6ac7
+IsList = False
+(9, 9)
+09629e4f
+IsList = False
+(11, 11)
+0962bcdd
+IsList = False
+(12, 12)
+09c534e7
+IsList = False
+(30, 30)
+0a1d4ef5
+IsList = False
+(30, 30)
+0a2355a6
+IsList = False
+(15, 17)
+0a938d79
+IsList = False
+(11, 27)
+0b148d64
+IsList = False
+(15, 17)
+0b17323b
+IsList = False
+(15, 15)
+0bb8deee
+IsList = False
+(14, 13)
+0becf7df
+IsList = False
+(10, 10)
+0c786b71
+IsList = False
+(3, 4)
+0c9aba6e
+IsList = False
+(13, 4)
+0ca9ddb6
+IsList = False
+(9, 9)
+0d3d703e
+IsList = False
+(3, 3)
+0d87d2a6
+IsList = False
+(23, 25)
+0e206a2e
+IsList = False
+(24, 19)
+0e671a1a
+IsList = False
+(13, 13)
+0f63c0b9
+IsList = False
+(15, 15)
+103eff5b
+IsList = False
+(16, 26)
+10fcaaa3
+IsList = False
+(6, 5)
+11852cab
+IsList = False
+(10, 10)
+1190bc91
+IsList = False
+(8, 8)
+1190e5a7
+IsList = False
+(22, 22)
+11dc524f
+IsList = False
+(13, 13)
+11e1fe23
+IsList = False
+(12, 14)
+12422b43
+IsList = False
+(10, 7)
+12997ef3
+IsList = True
+12eac192
+IsList = False
+(8, 8)
+13713586
+IsList = False
+(19, 18)
+137eaa0f
+IsList = False
+(11, 11)
+137f0df0
+IsList = False
+(10, 10)
+13f06aa5
+IsList = False
+(15, 17)
+140c817e
+IsList = False
+(14, 14)
+14754a24
+IsList = False
+(19, 19)
+1478ab18
+IsList = False
+(8, 8)
+14b8e18c
+IsList = False
+(10, 10)
+150deff5
+IsList = False
+(8, 11)
+15113be4
+IsList = False
+(23, 23)
+15660dd6
+IsList = False
+(25, 25)
+15663ba9
+IsList = False
+(15, 16)
+15696249
+IsList = False
+(3, 3)
+17829a00
+IsList = False
+(16, 16)
+178fcbfb
+IsList = False
+(12, 11)
+17b80ad2
+IsList = False
+(17, 17)
+17b866bd
+IsList = True
+17cae0c1
+IsList = False
+(3, 9)
+18286ef8
+IsList = False
+(19, 19)
+182e5d0f
+IsList = False
+(14, 14)
+18419cfa
+IsList = False
+(28, 26)
+18447a8d
+IsList = False
+(17, 11)
+184a9768
+IsList = False
+(25, 26)
+195ba7dc
+IsList = False
+(5, 13)
+1990f7a8
+IsList = False
+(17, 17)
+19bb5feb
+IsList = False
+(14, 15)
+1a07d186
+IsList = False
+(19, 26)
+1a244afd
+IsList = False
+(16, 16)
+1a2e2828
+IsList = False
+(11, 13)
+1a6449f1
+IsList = False
+(27, 25)
+1acc24af
+IsList = False
+(12, 12)
+1b2d62fb
+IsList = False
+(5, 7)
+1b59e163
+IsList = False
+(18, 18)
+1b60fb0c
+IsList = False
+(10, 10)
+1b8318e3
+IsList = False
+(15, 15)
+1be83260
+IsList = True
+1bfc4729
+IsList = False
+(10, 10)
+1c02dbbe
+IsList = False
+(15, 15)
+1c0d0a4b
+IsList = False
+(13, 13)
+1c56ad9f
+IsList = False
+(15, 15)
+1c786137
+IsList = False
+(17, 16)
+1caeab9d
+IsList = False
+(10, 10)
+1cf80156
+IsList = False
+(12, 12)
+1d0a4b61
+IsList = False
+(25, 25)
+1d398264
+IsList = True
+1d61978c
+IsList = False
+(16, 16)
+1da012fc
+IsList = False
+(19, 25)
+1e0a9b12
+IsList = False
+(5, 5)
+1e32b0e9
+IsList = False
+(17, 17)
+1e5d6875
+IsList = False
+(16, 16)
+1e81d6f9
+IsList = False
+(15, 15)
+1efba499
+IsList = False
+(12, 14)
+1f0c79e5
+IsList = False
+(9, 9)
+1f642eb9
+IsList = False
+(10, 10)
+1f85a75f
+IsList = False
+(30, 30)
+1f876c06
+IsList = False
+(10, 10)
+1fad071e
+IsList = False
+(9, 9)
+2013d3e2
+IsList = False
+(10, 10)
+2037f2c7
+IsList = False
+(24, 25)
+2072aba6
+IsList = False
+(3, 3)
+20818e16
+IsList = False
+(16, 16)
+20981f0e
+IsList = False
+(17, 13)
+20fb2937
+IsList = False
+(20, 11)
+212895b5
+IsList = False
+(21, 23)
+21f83797
+IsList = False
+(13, 13)
+2204b7a8
+IsList = False
+(10, 10)
+22168020
+IsList = False
+(10, 10)
+22208ba4
+IsList = False
+(7, 30)
+22233c11
+IsList = False
+(10, 10)
+22425bda
+IsList = False
+(16, 16)
+22806e14
+IsList = False
+(16, 16)
+2281f1f4
+IsList = False
+(10, 10)
+228f6490
+IsList = False
+(10, 10)
+22a4bbc2
+IsList = False
+(22, 4)
+22eb0ac0
+IsList = False
+(10, 10)
+230f2e48
+IsList = False
+(16, 16)
+234bbc79
+IsList = False
+(3, 11)
+23581191
+IsList = False
+(9, 9)
+239be575
+IsList = True
+23b5c85d
+IsList = False
+(18, 18)
+25094a63
+IsList = False
+(30, 30)
+252143c9
+IsList = False
+(13, 13)
+253bf280
+IsList = False
+(12, 13)
+2546ccf6
+IsList = False
+(26, 23)
+256b0a75
+IsList = False
+(25, 26)
+25c199f5
+IsList = True
+25d487eb
+IsList = False
+(16, 11)
+25d8a9c8
+IsList = False
+(3, 3)
+25e02866
+IsList = False
+(18, 18)
+25ff71a9
+IsList = True
+2601afb7
+IsList = False
+(11, 11)
+264363fd
+IsList = False
+(30, 30)
+2685904e
+IsList = False
+(10, 10)
+2697da3f
+IsList = False
+(8, 10)
+272f95fa
+IsList = False
+(17, 15)
+2753e76c
+IsList = False
+(16, 16)
+278e5215
+IsList = False
+(18, 18)
+27a28665
+IsList = True
+27a77e38
+IsList = False
+(9, 9)
+27f8ce4f
+IsList = False
+(3, 3)
+281123b4
+IsList = False
+(4, 19)
+28bf18c6
+IsList = False
+(8, 8)
+28e73c20
+IsList = False
+(18, 18)
+292dd178
+IsList = False
+(11, 15)
+29623171
+IsList = False
+(11, 11)
+29700607
+IsList = False
+(11, 11)
+29c11459
+IsList = False
+(5, 11)
+2a28add5
+IsList = False
+(10, 10)
+2a5f8217
+IsList = False
+(13, 13)
+2b01abd0
+IsList = False
+(14, 16)
+2b9ef948
+IsList = True
+2bcee788
+IsList = False
+(10, 10)
+2bee17df
+IsList = False
+(14, 14)
+2c0b0aff
+IsList = False
+(22, 23)
+2c608aff
+IsList = False
+(19, 21)
+2c737e39
+IsList = False
+(11, 10)
+2ccd9fef
+IsList = True
+2dc579da
+IsList = False
+(13, 13)
+2dd70a9a
+IsList = False
+(13, 13)
+2de01db2
+IsList = False
+(3, 10)
+2dee498d
+IsList = False
+(5, 15)
+2e65ae53
+IsList = False
+(28, 28)
+2f0c5170
+IsList = False
+(19, 19)
+2f767503
+IsList = False
+(9, 11)
+2faf500b
+IsList = False
+(19, 19)
+305b1341
+IsList = False
+(20, 20)
+30f42897
+IsList = False
+(3, 14)
+310f3251
+IsList = False
+(4, 4)
+3194b014
+IsList = False
+(20, 20)
+319f2597
+IsList = False
+(20, 20)
+31aa019c
+IsList = False
+(10, 10)
+31adaf00
+IsList = False
+(10, 10)
+31d5ba1a
+IsList = True
+320afe60
+IsList = True
+321b1fc6
+IsList = False
+(10, 10)
+32597951
+IsList = False
+(17, 17)
+32e9702f
+IsList = False
+(10, 10)
+33067df9
+IsList = False
+(7, 7)
+332202d5
+IsList = False
+(16, 16)
+332efdb3
+IsList = False
+(11, 11)
+3345333e
+IsList = False
+(16, 16)
+337b420f
+IsList = True
+3391f8c0
+IsList = False
+(11, 14)
+33b52de3
+IsList = False
+(23, 23)
+3428a4f5
+IsList = True
+342ae2ed
+IsList = False
+(16, 16)
+342dd610
+IsList = False
+(16, 16)
+3490cc26
+IsList = False
+(22, 23)
+34b99a2b
+IsList = False
+(5, 9)
+34cfa167
+IsList = True
+351d6448
+IsList = False
+(15, 13)
+358ba94e
+IsList = False
+(17, 19)
+3618c87e
+IsList = False
+(5, 5)
+363442ee
+IsList = False
+(9, 13)
+36d67576
+IsList = False
+(14, 15)
+36fdfd69
+IsList = False
+(17, 18)
+37ce87bb
+IsList = False
+(9, 15)
+37d3e8b2
+IsList = False
+(17, 18)
+3906de3d
+IsList = False
+(10, 10)
+396d80d7
+IsList = False
+(16, 16)
+3979b1a8
+IsList = False
+(5, 5)
+39a8645d
+IsList = False
+(14, 14)
+39e1d7f9
+IsList = False
+(29, 29)
+3a301edc
+IsList = False
+(21, 21)
+3aa6fb7a
+IsList = False
+(7, 7)
+3ac3eb23
+IsList = False
+(6, 12)
+3ad05f52
+IsList = False
+(28, 28)
+3af2c5a8
+IsList = False
+(3, 4)
+3b4c2228
+IsList = True
+3bd292e8
+IsList = False
+(9, 9)
+3bd67248
+IsList = False
+(10, 10)
+3bdb4ada
+IsList = False
+(11, 20)
+3befdf3e
+IsList = False
+(12, 12)
+3c9b0459
+IsList = False
+(3, 3)
+3cd86f4f
+IsList = True
+3d31c5b3
+IsList = False
+(12, 6)
+3d588dc9
+IsList = False
+(16, 16)
+3d6c6e23
+IsList = False
+(30, 10)
+3de23699
+IsList = False
+(18, 19)
+3e980e27
+IsList = False
+(13, 13)
+3eda0437
+IsList = False
+(4, 24)
+3ee1011a
+IsList = False
+(21, 23)
+3f23242b
+IsList = False
+(17, 19)
+3f7978a0
+IsList = False
+(14, 13)
+4093f84a
+IsList = False
+(14, 14)
+40f6cd08
+IsList = False
+(30, 30)
+412b6263
+IsList = False
+(5, 10)
+414297c0
+IsList = False
+(26, 24)
+41ace6b5
+IsList = False
+(15, 15)
+41e4d17e
+IsList = False
+(15, 15)
+423a55dc
+IsList = False
+(11, 13)
+4258a5f9
+IsList = False
+(9, 9)
+4290ef0e
+IsList = False
+(19, 19)
+42918530
+IsList = False
+(25, 25)
+42a15761
+IsList = False
+(11, 19)
+42a50994
+IsList = False
+(17, 14)
+42f14c03
+IsList = False
+(16, 16)
+42f83767
+IsList = True
+4347f46a
+IsList = False
+(17, 19)
+4364c1c4
+IsList = False
+(14, 13)
+444801d8
+IsList = False
+(10, 10)
+445eab21
+IsList = False
+(10, 10)
+447fd412
+IsList = False
+(17, 21)
+44d8ac46
+IsList = False
+(12, 12)
+44f52bb0
+IsList = True
+4522001f
+IsList = False
+(3, 3)
+456873bc
+IsList = False
+(19, 19)
+45737921
+IsList = False
+(8, 9)
+458e3a53
+IsList = False
+(27, 27)
+45bbe264
+IsList = False
+(15, 15)
+4612dd53
+IsList = False
+(13, 13)
+46442a0e
+IsList = False
+(3, 3)
+465b7d93
+IsList = False
+(10, 10)
+469497ad
+IsList = False
+(5, 5)
+46c35fc7
+IsList = False
+(7, 7)
+46f33fce
+IsList = False
+(10, 10)
+470c91de
+IsList = False
+(11, 11)
+47c1f68c
+IsList = False
+(13, 13)
+48131b3c
+IsList = False
+(4, 4)
+484b58aa
+IsList = False
+(29, 29)
+4852f2fa
+IsList = True
+48634b99
+IsList = False
+(16, 16)
+48d8fb45
+IsList = False
+(10, 10)
+48f8583b
+IsList = False
+(3, 3)
+4938f0c2
+IsList = False
+(18, 14)
+494ef9d7
+IsList = False
+(4, 4)
+496994bd
+IsList = False
+(10, 6)
+49d1d64f
+IsList = False
+(3, 2)
+4a1cacc2
+IsList = False
+(10, 10)
+4acc7107
+IsList = False
+(10, 10)
+4b6b68e5
+IsList = False
+(26, 24)
+4be741c5
+IsList = False
+(14, 14)
+4c177718
+IsList = True
+4c4377d9
+IsList = False
+(3, 4)
+4c5c2cf0
+IsList = False
+(15, 15)
+4cd1b7b2
+IsList = False
+(4, 4)
+4df5b0ae
+IsList = False
+(10, 10)
+4e45f183
+IsList = False
+(19, 19)
+4e469f39
+IsList = False
+(10, 10)
+4e7e0eb9
+IsList = True
+4f537728
+IsList = False
+(20, 20)
+4ff4c9da
+IsList = False
+(27, 27)
+5034a0b5
+IsList = False
+(9, 9)
+505fff84
+IsList = False
+(9, 14)
+506d28a5
+IsList = False
+(9, 5)
+50846271
+IsList = False
+(19, 22)
+508bd3b6
+IsList = False
+(12, 12)
+50a16a69
+IsList = False
+(6, 6)
+50aad11f
+IsList = False
+(18, 13)
+50c07299
+IsList = False
+(16, 16)
+50cb2852
+IsList = False
+(14, 13)
+50f325b5
+IsList = False
+(16, 17)
+5117e062
+IsList = False
+(13, 13)
+5168d44c
+IsList = False
+(7, 17)
+516b51b7
+IsList = False
+(15, 17)
+5207a7b5
+IsList = False
+(15, 9)
+522fdd07
+IsList = False
+(16, 16)
+52364a65
+IsList = False
+(8, 8)
+5289ad53
+IsList = False
+(15, 10)
+52df9849
+IsList = True
+52fd389e
+IsList = False
+(29, 29)
+538b439f
+IsList = False
+(19, 23)
+539a4f51
+IsList = False
+(5, 5)
+53b68214
+IsList = True
+543a7ed5
+IsList = False
+(15, 15)
+54d82841
+IsList = False
+(7, 11)
+54d9e175
+IsList = False
+(7, 11)
+Exception! -  boolean index did not match indexed array along axis 0; size of axis is 3 but size of corresponding boolean axis is 4
+54db823b
+IsList = False
+(15, 15)
+54dc2872
+IsList = False
+(12, 13)
+55059096
+IsList = False
+(17, 13)
+551d5bf1
+IsList = False
+(26, 26)
+5521c0d9
+IsList = False
+(15, 15)
+5582e5ca
+IsList = False
+(3, 3)
+5587a8d0
+IsList = False
+(8, 8)
+5614dbcf
+IsList = False
+(9, 9)
+5623160b
+IsList = False
+(16, 16)
+56dc2b01
+IsList = False
+(4, 18)
+56ff96f3
+IsList = False
+(9, 8)
+5751f35e
+IsList = False
+(12, 12)
+575b1a71
+IsList = False
+(10, 10)
+5783df64
+IsList = False
+(9, 9)
+5792cb4d
+IsList = False
+(10, 10)
+57aa92db
+IsList = False
+(19, 30)
+57edb29d
+IsList = False
+(28, 28)
+5833af48
+IsList = False
+(19, 27)
+58743b76
+IsList = False
+(14, 14)
+58c02a16
+IsList = False
+(16, 16)
+58e15b12
+IsList = False
+(24, 20)
+59341089
+IsList = False
+(3, 3)
+5a5a2103
+IsList = False
+(24, 24)
+5a719d11
+IsList = False
+(30, 16)
+5ad4f10b
+IsList = False
+(22, 26)
+5ad8a7c0
+IsList = False
+(4, 6)
+5adee1b2
+IsList = False
+(26, 26)
+5af49b42
+IsList = False
+(17, 18)
+5b37cb25
+IsList = False
+(30, 30)
+5b526a93
+IsList = False
+(21, 30)
+5b692c0f
+IsList = False
+(24, 28)
+5b6cbef5
+IsList = False
+(4, 4)
+################################################################################
+Success!
+[[0, 0, 0, 0, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2],
+ [0, 0, 0, 0, 2, 2, 0, 2, 0, 0, 0, 0, 2, 2, 0, 2],
+ [0, 0, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2],
+ [0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2],
+ [2, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 0, 2, 2, 0, 2],
+ [2, 2, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0],
+ [0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 2],
+ [0, 2, 0, 2, 0, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+ [2, 2, 0, 2, 2, 2, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+ [2, 2, 0, 0, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 2],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 2],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]]
+################################################################################
+5bd6f4ac
+IsList = False
+(9, 9)
+5c0a986e
+IsList = False
+(10, 10)
+5c2c9af4
+IsList = False
+(28, 28)
+5d2a5c43
+IsList = True
+5d588b4d
+IsList = True
+5daaa586
+IsList = False
+(16, 15)
+5e6bbc0b
+IsList = False
+(5, 5)
+5ecac7f7
+IsList = True
+5ffb2104
+IsList = False
+(10, 10)
+60a26a3e
+IsList = False
+(9, 15)
+60b61512
+IsList = False
+(9, 9)
+60c09cac
+IsList = False
+(5, 5)
+60d73be6
+IsList = False
+(11, 17)
+6150a2bd
+IsList = False
+(3, 3)
+6165ea8f
+IsList = True
+623ea044
+IsList = False
+(17, 17)
+626c0bcc
+IsList = False
+(7, 7)
+62ab2642
+IsList = False
+(5, 12)
+62b74c02
+IsList = False
+(4, 14)
+62c24649
+IsList = False
+(3, 3)
+6350f1f4
+IsList = False
+(19, 19)
+63613498
+IsList = False
+(10, 10)
+639f5a19
+IsList = False
+(23, 23)
+642248e4
+IsList = False
+(16, 18)
+642d658d
+IsList = False
+(27, 22)
+6430c8c4
+IsList = False
+(9, 4)
+6455b5f5
+IsList = False
+(13, 16)
+64a7c07e
+IsList = False
+(12, 12)
+652646ff
+IsList = False
+(17, 17)
+662c240a
+IsList = False
+(9, 3)
+668eec9a
+IsList = False
+(16, 16)
+66ac4c3b
+IsList = False
+(22, 22)
+66e6c45b
+IsList = False
+(4, 4)
+66f2d22f
+IsList = False
+(4, 14)
+67385a82
+IsList = False
+(5, 5)
+673ef223
+IsList = False
+(21, 12)
+67636eac
+IsList = False
+(14, 18)
+6773b310
+IsList = False
+(11, 11)
+67a3c6ac
+IsList = False
+(3, 3)
+67a423a3
+IsList = False
+(12, 12)
+67c52801
+IsList = False
+(7, 11)
+67e8384a
+IsList = False
+(3, 3)
+681b3aeb
+IsList = False
+(10, 10)
+6855a6e4
+IsList = False
+(15, 15)
+689c358e
+IsList = False
+(11, 11)
+68b16354
+IsList = False
+(7, 7)
+68b67ca3
+IsList = False
+(6, 6)
+68bc2e87
+IsList = False
+(18, 19)
+692cd3b6
+IsList = False
+(15, 15)
+694f12f3
+IsList = False
+(10, 10)
+695367ec
+IsList = False
+(5, 5)
+696d4842
+IsList = False
+(20, 20)
+69889d6e
+IsList = False
+(10, 10)
+6a11f6da
+IsList = False
+(15, 5)
+6a1e5592
+IsList = False
+(10, 15)
+6a980be1
+IsList = False
+(19, 19)
+6aa20dc0
+IsList = False
+(22, 22)
+6ad5bdfd
+IsList = False
+(10, 10)
+6b9890af
+IsList = False
+(24, 26)
+6bcdb01e
+IsList = False
+(8, 8)
+6c434453
+IsList = False
+(10, 10)
+6ca952ad
+IsList = False
+(14, 14)
+6cbe9eb8
+IsList = False
+(19, 27)
+6cdd2623
+IsList = False
+(16, 19)
+6cf79266
+IsList = False
+(20, 20)
+6d0160f0
+IsList = False
+(11, 11)
+6d0aefbc
+IsList = False
+(3, 3)
+6d1d5c90
+IsList = False
+(6, 7)
+6d58a25d
+IsList = False
+(20, 20)
+6d75e8bb
+IsList = False
+(9, 11)
+6df30ad6
+IsList = False
+(10, 10)
+6e02f1e3
+IsList = False
+(3, 3)
+6e19193c
+IsList = False
+(10, 10)
+6e82a1ae
+IsList = False
+(10, 10)
+6ea4a07e
+IsList = True
+6ecd11f4
+IsList = False
+(21, 24)
+6f473927
+IsList = False
+(12, 6)
+6f8cd79b
+IsList = False
+(7, 6)
+6fa7a44f
+IsList = False
+(3, 3)
+6ffe8f07
+IsList = True
+7039b2d7
+IsList = False
+(16, 16)
+705a3229
+IsList = False
+(11, 16)
+712bf12e
+IsList = False
+(13, 13)
+72207abc
+IsList = False
+(3, 29)
+72322fa7
+IsList = False
+(19, 19)
+72a961c9
+IsList = False
+(9, 11)
+72ca375d
+IsList = False
+(10, 10)
+73182012
+IsList = False
+(12, 12)
+73c3b0d8
+IsList = False
+(12, 8)
+73ccf9c2
+IsList = False
+(22, 22)
+7447852a
+IsList = False
+(3, 25)
+7468f01a
+IsList = False
+(17, 17)
+746b3537
+IsList = False
+(4, 9)
+74dd1130
+IsList = False
+(3, 3)
+753ea09b
+IsList = False
+(30, 30)
+758abdf0
+IsList = False
+(8, 16)
+759f3fd3
+IsList = False
+(12, 12)
+75b8110e
+IsList = False
+(8, 8)
+760b3cac
+IsList = False
+(6, 9)
+762cd429
+IsList = False
+(16, 30)
+770cc55f
+IsList = False
+(11, 5)
+776ffc46
+IsList = False
+(20, 20)
+77fdfe62
+IsList = False
+(10, 10)
+780d0b14
+IsList = False
+(23, 28)
+782b5218
+IsList = False
+(10, 10)
+7837ac64
+IsList = False
+(29, 29)
+78e78cff
+IsList = False
+(12, 12)
+79369cc6
+IsList = False
+(16, 15)
+794b24be
+IsList = True
+7953d61e
+IsList = False
+(4, 4)
+79cce52d
+IsList = False
+(7, 7)
+7acdf6d3
+IsList = False
+(15, 15)
+7b6016b9
+IsList = False
+(22, 25)
+7b7f7511
+IsList = False
+(8, 3)
+7bb29440
+IsList = False
+(22, 25)
+7c008303
+IsList = False
+(9, 9)
+7c8af763
+IsList = False
+(10, 10)
+7c9b52a0
+IsList = False
+(16, 16)
+7d18a6fb
+IsList = False
+(16, 17)
+7d1f7ee8
+IsList = False
+(29, 28)
+7d419a02
+IsList = False
+(25, 20)
+7d7772cc
+IsList = False
+(8, 8)
+7ddcd7ec
+IsList = False
+(10, 10)
+7df24a62
+IsList = False
+(23, 23)
+7e02026e
+IsList = False
+(12, 12)
+7e0986d6
+IsList = False
+(12, 17)
+7e2bad24
+IsList = True
+7e4d4f7c
+IsList = False
+(3, 5)
+7e576d6e
+IsList = False
+(30, 30)
+7ec998c9
+IsList = False
+(7, 7)
+7ee1c6ea
+IsList = False
+(10, 10)
+7f4411dc
+IsList = False
+(10, 10)
+7fe24cdd
+IsList = False
+(3, 3)
+80214e03
+IsList = False
+(22, 19)
+80af3007
+IsList = False
+(17, 19)
+810b9b61
+IsList = False
+(12, 12)
+817e6c09
+IsList = False
+(7, 15)
+81c0276b
+IsList = False
+(19, 21)
+825aa9e9
+IsList = False
+(10, 20)
+82819916
+IsList = False
+(14, 10)
+83302e8f
+IsList = False
+(27, 27)
+833966f4
+IsList = False
+(5, 1)
+833dafe3
+IsList = False
+(8, 8)
+834ec97d
+IsList = False
+(12, 12)
+83b6b474
+IsList = False
+(8, 8)
+83eb0a57
+IsList = False
+(30, 30)
+8403a5d5
+IsList = False
+(10, 10)
+84551f4c
+IsList = True
+845d6e51
+IsList = False
+(18, 17)
+846bdb03
+IsList = False
+(13, 13)
+84ba50d3
+IsList = False
+(18, 18)
+84db8fc4
+IsList = False
+(10, 10)
+84f2aca1
+IsList = False
+(13, 12)
+855e0971
+IsList = False
+(17, 15)
+8597cfd7
+IsList = False
+(11, 9)
+85b81ff1
+IsList = False
+(13, 14)
+85c4e7cd
+IsList = False
+(14, 14)
+85fa5666
+IsList = False
+(8, 8)
+8618d23e
+IsList = False
+(4, 5)
+868de0fa
+IsList = False
+(20, 20)
+8719f442
+IsList = False
+(3, 3)
+8731374e
+IsList = False
+(19, 17)
+878187ab
+IsList = False
+(16, 16)
+Exception... boolean index did not match indexed array along axis 0; size of axis is 16 but size of corresponding boolean axis is 15
+87ab05b8
+IsList = False
+(4, 4)
+880c1354
+IsList = False
+(8, 8)
+88207623
+IsList = False
+(16, 18)
+8886d717
+IsList = False
+(13, 13)
+88a10436
+IsList = False
+(10, 11)
+88a62173
+IsList = False
+(5, 5)
+890034e9
+IsList = False
+(21, 21)
+891232d6
+IsList = False
+(27, 25)
+896d5239
+IsList = False
+(15, 18)
+8a004b2b
+IsList = False
+(19, 18)
+8a371977
+IsList = False
+(30, 30)
+8a6d367c
+IsList = False
+(27, 21)
+8abad3cf
+IsList = False
+(5, 10)
+8b28cd80
+IsList = True
+8ba14f53
+IsList = False
+(4, 9)
+8be77c9e
+IsList = False
+(3, 3)
+8cb8642d
+IsList = False
+(19, 24)
+8d5021e8
+IsList = False
+(3, 2)
+8d510a79
+IsList = False
+(10, 10)
+8dab14c2
+IsList = True
+8dae5dfc
+IsList = False
+(20, 19)
+8e1813be
+IsList = False
+(19, 19)
+8e2edd66
+IsList = False
+(3, 3)
+8e301a54
+IsList = False
+(10, 10)
+8e5a5113
+IsList = False
+(3, 11)
+8eb1be9a
+IsList = False
+(14, 13)
+8ee62060
+IsList = False
+(14, 14)
+8efcae92
+IsList = False
+(20, 20)
+8f2ea7aa
+IsList = False
+(9, 9)
+8fbca751
+IsList = False
+(8, 12)
+8fff9e47
+IsList = False
+(4, 4)
+902510d5
+IsList = False
+(12, 11)
+90347967
+IsList = False
+(9, 9)
+90c28cc7
+IsList = False
+(21, 21)
+90f3ed37
+IsList = False
+(15, 10)
+9110e3c5
+IsList = True
+913fb3ed
+IsList = False
+(16, 16)
+91413438
+IsList = False
+(3, 3)
+91714a58
+IsList = False
+(16, 16)
+9172f3a0
+IsList = False
+(3, 3)
+917bccba
+IsList = False
+(12, 12)
+928ad970
+IsList = False
+(15, 15)
+92e50de0
+IsList = False
+(29, 29)
+9344f635
+IsList = False
+(10, 10)
+9356391f
+IsList = False
+(16, 16)
+93b4f4b3
+IsList = False
+(17, 10)
+93b581b8
+IsList = False
+(6, 6)
+93c31fbe
+IsList = False
+(26, 28)
+94133066
+IsList = False
+(19, 30)
+941d9a10
+IsList = False
+(10, 10)
+94414823
+IsList = False
+(10, 10)
+9473c6fb
+IsList = False
+(9, 12)
+94be5b80
+IsList = False
+(18, 15)
+94f9d214
+IsList = False
+(8, 4)
+952a094c
+IsList = False
+(10, 10)
+9565186b
+IsList = False
+(3, 3)
+95755ff2
+IsList = False
+(11, 11)
+95990924
+IsList = False
+(15, 15)
+95a58926
+IsList = False
+(22, 27)
+963c33f8
+IsList = False
+(16, 16)
+963e52fc
+IsList = False
+(5, 9)
+963f59bc
+IsList = False
+(14, 16)
+96a8c0cd
+IsList = False
+(13, 29)
+9720b24f
+IsList = False
+(13, 12)
+97239e3d
+IsList = False
+(17, 17)
+973e499e
+IsList = True
+9772c176
+IsList = False
+(20, 20)
+97999447
+IsList = False
+(9, 8)
+97a05b5b
+IsList = False
+(19, 15)
+97c75046
+IsList = False
+(10, 16)
+981add89
+IsList = False
+(30, 30)
+9841fdad
+IsList = False
+(12, 26)
+984d8a3e
+IsList = False
+(17, 17)
+985ae207
+IsList = False
+(25, 25)
+98c475bf
+IsList = False
+(20, 20)
+98cf29f8
+IsList = False
+(12, 17)
+992798f6
+IsList = False
+(16, 16)
+99306f82
+IsList = False
+(20, 20)
+995c5fa3
+IsList = False
+(4, 14)
+9968a131
+IsList = False
+(5, 5)
+996ec1f3
+IsList = False
+(19, 19)
+99b1bc43
+IsList = False
+(9, 4)
+99caaf76
+IsList = False
+(18, 17)
+99fa7670
+IsList = False
+(7, 8)
+9a4bb226
+IsList = False
+(15, 15)
+9aec4887
+IsList = False
+(16, 16)
+9af7a82c
+IsList = False
+(4, 4)
+9b2a60aa
+IsList = False
+(13, 24)
+9b30e358
+IsList = False
+(10, 5)
+9b365c51
+IsList = False
+(7, 28)
+9b4c17c4
+IsList = True
+9b5080bb
+IsList = False
+(27, 27)
+9ba4a9aa
+IsList = False
+(22, 22)
+9bebae7a
+IsList = False
+(11, 12)
+9c1e755f
+IsList = False
+(10, 10)
+9c56f360
+IsList = False
+(9, 9)
+9caba7c3
+IsList = False
+(19, 19)
+9caf5b84
+IsList = False
+(6, 4)
+9d9215db
+IsList = False
+(19, 19)
+9ddd00f0
+IsList = False
+(19, 19)
+9def23fe
+IsList = False
+(20, 20)
+9dfd6313
+IsList = False
+(6, 6)
+9edfc990
+IsList = False
+(16, 16)
+9f236235
+IsList = False
+(23, 23)
+9f27f097
+IsList = False
+(12, 12)
+9f41bd9c
+IsList = False
+(18, 18)
+9f5f939b
+IsList = False
+(20, 20)
+9f669b64
+IsList = False
+(10, 10)
+9f8de559
+IsList = False
+(14, 14)
+a04b2602
+IsList = False
+(16, 27)
+a096bf4d
+IsList = False
+(26, 26)
+a09f6c25
+IsList = True
+a1570a43
+IsList = False
+(10, 8)
+a1aa0c1e
+IsList = False
+(21, 21)
+a2d730bd
+IsList = False
+(30, 30)
+a2fd1cf0
+IsList = False
+(12, 14)
+a3325580
+IsList = False
+(10, 10)
+a3f84088
+IsList = False
+(30, 30)
+a406ac07
+IsList = False
+(10, 10)
+a416b8f3
+IsList = False
+(5, 4)
+a416fc5b
+IsList = False
+(11, 11)
+a48eeaf7
+IsList = False
+(10, 10)
+a5313dff
+IsList = False
+(9, 9)
+################################################################################
+Success!
+[[0, 0, 2, 2, 2, 2, 2, 0, 0],
+ [0, 0, 2, 1, 1, 1, 2, 0, 0],
+ [0, 0, 2, 1, 1, 1, 2, 0, 0],
+ [2, 2, 2, 2, 2, 2, 2, 0, 0],
+ [2, 1, 1, 1, 2, 0, 0, 0, 0],
+ [2, 1, 2, 1, 2, 0, 0, 0, 0],
+ [2, 1, 1, 1, 2, 2, 2, 2, 2],
+ [2, 2, 2, 2, 2, 0, 0, 0, 0],
+ [0, 0, 0, 0, 2, 0, 0, 0, 0]]
+################################################################################
+a57f2f04
+IsList = False
+(26, 22)
+a59b95c0
+IsList = False
+(3, 3)
+a5f85a15
+IsList = False
+(12, 12)
+a61ba2ce
+IsList = False
+(13, 13)
+a61f2674
+IsList = False
+(9, 9)
+a644e277
+IsList = False
+(19, 20)
+a64e4611
+IsList = False
+(30, 30)
+a65b410d
+IsList = False
+(9, 9)
+a680ac02
+IsList = False
+(22, 21)
+a68b268e
+IsList = False
+(9, 9)
+a6953f00
+IsList = False
+(8, 8)
+a699fb00
+IsList = False
+(10, 10)
+a740d043
+IsList = False
+(6, 6)
+a78176bb
+IsList = False
+(10, 10)
+a79310a0
+IsList = False
+(5, 5)
+a834deea
+IsList = False
+(16, 16)
+a85d4709
+IsList = False
+(3, 3)
+a8610ef7
+IsList = False
+(6, 6)
+a87f7484
+IsList = False
+(15, 3)
+a8c38be5
+IsList = False
+(16, 15)
+a8d7556c
+IsList = False
+(18, 18)
+a934301b
+IsList = False
+(13, 12)
+a9f96cdd
+IsList = False
+(3, 5)
+aa18de87
+IsList = False
+(4, 9)
+aa300dc3
+IsList = False
+(10, 10)
+aa62e3f4
+IsList = False
+(5, 5)
+aab50785
+IsList = False
+(15, 17)
+aabf363d
+IsList = False
+(7, 7)
+aaecdb9a
+IsList = False
+(10, 10)
+aaef0977
+IsList = False
+(8, 8)
+aba27056
+IsList = False
+(10, 10)
+abbfd121
+IsList = False
+(23, 22)
+ac0a08a4
+IsList = False
+(3, 3)
+ac0c2ac3
+IsList = False
+(13, 13)
+ac0c5833
+IsList = False
+(27, 27)
+ac2e8ecf
+IsList = False
+(16, 15)
+ac3e2b04
+IsList = False
+(16, 18)
+ac605cbb
+IsList = False
+(11, 11)
+ac6f9922
+IsList = False
+(19, 19)
+ad173014
+IsList = False
+(27, 27)
+ad38a9d0
+IsList = False
+(9, 9)
+ad3b40cf
+IsList = False
+(17, 17)
+ad7e01d0
+IsList = False
+(5, 5)
+ae3edfdc
+IsList = False
+(15, 15)
+ae4f1146
+IsList = False
+(9, 9)
+ae58858e
+IsList = False
+(6, 8)
+aedd82e4
+IsList = False
+(5, 4)
+aee291af
+IsList = False
+(18, 18)
+af24b4cc
+IsList = False
+(9, 10)
+af726779
+IsList = True
+af902bf9
+IsList = False
+(10, 10)
+afe3afe9
+IsList = False
+(30, 30)
+b0722778
+IsList = False
+(8, 9)
+b0c4d837
+IsList = False
+(9, 9)
+b0f4d537
+IsList = False
+(12, 15)
+b15fca0b
+IsList = False
+(10, 10)
+b190f7f5
+IsList = False
+(8, 4)
+b1948b0a
+IsList = False
+(4, 4)
+b1986d4b
+IsList = False
+(26, 25)
+b1fc8b8e
+IsList = True
+b20f7c8b
+IsList = False
+(18, 22)
+b230c067
+IsList = False
+(10, 10)
+b25e450b
+IsList = False
+(18, 14)
+b27ca6d3
+IsList = False
+(17, 16)
+b2862040
+IsList = False
+(16, 15)
+b2bc3ffd
+IsList = False
+(8, 8)
+b457fec5
+IsList = False
+(27, 23)
+b4a43f3b
+IsList = False
+(13, 6)
+b527c5c6
+IsList = False
+(20, 20)
+b548a754
+IsList = False
+(13, 13)
+b5bb5719
+IsList = False
+(6, 12)
+b60334d2
+IsList = False
+(9, 9)
+b6afb2da
+IsList = False
+(10, 10)
+b71a7747
+IsList = False
+(28, 28)
+b7249182
+IsList = False
+(19, 9)
+b7256dcd
+IsList = False
+(7, 7)
+b745798f
+IsList = False
+(15, 15)
+b74ca5d1
+IsList = True
+b775ac94
+IsList = False
+(24, 24)
+b782dc8a
+IsList = False
+(15, 15)
+b7955b3c
+IsList = True
+b7999b51
+IsList = False
+(12, 18)
+b7cb93ac
+IsList = False
+(10, 10)
+b7f8a4d8
+IsList = False
+(30, 30)
+b7fb29bc
+IsList = False
+(15, 15)
+b8825c91
+IsList = False
+(16, 16)
+b8cdaf2b
+IsList = False
+(9, 9)
+b91ae062
+IsList = False
+(3, 3)
+b942fd60
+IsList = False
+(10, 12)
+b94a9452
+IsList = False
+(14, 13)
+b9630600
+IsList = False
+(30, 30)
+b9b7f026
+IsList = False
+(14, 15)
+ba1aa698
+IsList = False
+(16, 25)
+ba26e723
+IsList = False
+(3, 17)
+ba97ae07
+IsList = False
+(11, 6)
+ba9d41b8
+IsList = False
+(19, 19)
+bae5c565
+IsList = False
+(11, 11)
+baf41dbf
+IsList = False
+(16, 17)
+bb43febb
+IsList = False
+(10, 10)
+bb52a14b
+IsList = False
+(22, 22)
+bbb1b8b6
+IsList = True
+bbc9ae5d
+IsList = False
+(1, 12)
+Exception... -  index 3 is out of bounds for axis 0 with size 3
+bc1d5164
+IsList = False
+(5, 7)
+bc4146bd
+IsList = False
+(4, 4)
+bc93ec48
+IsList = False
+(16, 16)
+bcb3040b
+IsList = False
+(18, 18)
+bd14c3bf
+IsList = False
+(19, 19)
+bd283c4a
+IsList = False
+(10, 10)
+bd4472b8
+IsList = False
+(12, 5)
+bd5af378
+IsList = False
+(10, 8)
+bda2d7a6
+IsList = True
+bdad9b1f
+IsList = False
+(6, 6)
+be03b35f
+IsList = False
+(5, 5)
+be94b721
+IsList = False
+(9, 9)
+beb8660c
+IsList = False
+(11, 8)
+bf32578f
+IsList = False
+(8, 8)
+bf699163
+IsList = False
+(13, 14)
+bf89d739
+IsList = False
+(14, 17)
+c074846d
+IsList = True
+c0f76784
+IsList = False
+(12, 12)
+c1990cce
+IsList = False
+(1, 17)
+Exception... -  index 3 is out of bounds for axis 0 with size 3
+c1d99e64
+IsList = False
+(27, 25)
+c3202e5a
+IsList = False
+(29, 29)
+c35c1b4c
+IsList = False
+(10, 10)
+c3e719e8
+IsList = False
+(3, 3)
+c3fa4749
+IsList = True
+c444b776
+IsList = False
+(19, 29)
+c48954c1
+IsList = False
+(3, 3)
+c4d1a9ae
+IsList = False
+(10, 8)
+c59eb873
+IsList = False
+(5, 5)
+c6141b15
+IsList = False
+(16, 16)
+c61be7dc
+IsList = False
+(19, 19)
+c62e2108
+IsList = False
+(24, 24)
+c64f1187
+IsList = False
+(20, 18)
+c658a4bd
+IsList = False
+(19, 19)
+c6e1b8da
+IsList = False
+(20, 20)
+c7d4e6ad
+IsList = False
+(10, 10)
+c803e39c
+IsList = False
+(7, 30)
+c87289bb
+IsList = False
+(10, 15)
+c8b7cc0f
+IsList = False
+(9, 9)
+c8cbb738
+IsList = False
+(18, 19)
+c8f0f002
+IsList = False
+(3, 5)
+################################################################################
+Success!
+[[1, 5, 5, 1, 5], [8, 1, 5, 5, 5], [8, 5, 1, 5, 8]]
+################################################################################
+c909285e
+IsList = False
+(24, 24)
+c920a713
+IsList = False
+(25, 25)
+c92b942c
+IsList = False
+(3, 3)
+c9680e90
+IsList = False
+(11, 11)
+c97c0139
+IsList = False
+(21, 22)
+c9e6f938
+IsList = False
+(3, 3)
+c9f8e694
+IsList = False
+(12, 12)
+ca8de6ea
+IsList = False
+(5, 5)
+caa06a1f
+IsList = False
+(18, 18)
+cad67732
+IsList = False
+(10, 10)
+cb227835
+IsList = False
+(13, 14)
+cbded52d
+IsList = False
+(8, 8)
+cc9053aa
+IsList = False
+(9, 9)
+ccd554ac
+IsList = False
+(5, 5)
+cce03e0d
+IsList = False
+(3, 3)
+cd3c21df
+IsList = False
+(13, 13)
+cdecee7f
+IsList = False
+(10, 10)
+ce039d91
+IsList = False
+(10, 10)
+ce22a75a
+IsList = False
+(9, 9)
+ce4f8723
+IsList = False
+(9, 4)
+ce602527
+IsList = False
+(18, 18)
+ce8d95cc
+IsList = False
+(12, 13)
+ce9e57f2
+IsList = False
+(11, 9)
+cf133acc
+IsList = False
+(15, 15)
+cf5fd0ad
+IsList = False
+(3, 3)
+cf98881b
+IsList = False
+(4, 14)
+cfb2ce5a
+IsList = False
+(10, 10)
+d017b73f
+IsList = False
+(3, 11)
+d037b0a7
+IsList = False
+(3, 3)
+d06dbe63
+IsList = False
+(13, 13)
+d07ae81c
+IsList = False
+(17, 19)
+d0f5fe59
+IsList = False
+(15, 12)
+d10ecb37
+IsList = False
+(4, 8)
+d13f3404
+IsList = False
+(3, 3)
+d19f7514
+IsList = False
+(12, 4)
+d22278a0
+IsList = False
+(17, 17)
+d23f8c26
+IsList = False
+(7, 7)
+d255d7a7
+IsList = False
+(20, 20)
+d282b262
+IsList = False
+(15, 15)
+d2abd087
+IsList = False
+(10, 10)
+d2acf2cb
+IsList = False
+(10, 9)
+d304284e
+IsList = False
+(23, 28)
+d364b489
+IsList = False
+(10, 10)
+d37a1ef5
+IsList = False
+(13, 12)
+d406998b
+IsList = False
+(3, 17)
+d43fd935
+IsList = False
+(10, 10)
+d4469b4b
+IsList = True
+d47aa2ff
+IsList = False
+(10, 21)
+d492a647
+IsList = False
+(15, 17)
+d4a91cb9
+IsList = False
+(12, 13)
+d4b1c2b1
+IsList = False
+(3, 3)
+d4c90558
+IsList = False
+(21, 21)
+d4f3cd78
+IsList = False
+(10, 10)
+d511f180
+IsList = False
+(4, 4)
+d56f2372
+IsList = False
+(22, 20)
+d5c634a2
+IsList = True
+d5d6de2d
+IsList = True
+d631b094
+IsList = False
+(3, 3)
+d6542281
+IsList = True
+d687bc17
+IsList = False
+(14, 17)
+d6ad076f
+IsList = False
+(10, 10)
+d6e50e54
+IsList = False
+(16, 16)
+d749d46f
+IsList = False
+(3, 14)
+d753a70b
+IsList = False
+(16, 16)
+d89b689b
+IsList = False
+(10, 10)
+d8c310e9
+IsList = False
+(5, 15)
+d90796e8
+IsList = False
+(7, 9)
+d931c21c
+IsList = False
+(30, 30)
+d93c6891
+IsList = False
+(16, 18)
+d94c3b52
+IsList = False
+(17, 25)
+d968ffd4
+IsList = True
+d9f24cd1
+IsList = False
+(10, 10)
+d9fac9be
+IsList = False
+(12, 12)
+da2b0fe3
+IsList = True
+################################################################################
+Success!
+[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
+ [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
+ [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
+ [3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
+ [0, 2, 2, 2, 2, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+ [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
+################################################################################
+da6e95e5
+IsList = True
+dae9d2b5
+IsList = True
+db118e2a
+IsList = False
+(6, 5)
+db3e9e38
+IsList = False
+(9, 9)
+db615bd4
+IsList = False
+(25, 25)
+db7260a4
+IsList = False
+(10, 10)
+db93a21d
+IsList = False
+(30, 30)
+dbc1a6ce
+IsList = False
+(19, 21)
+dc1df850
+IsList = False
+(10, 10)
+dc2aa30b
+IsList = False
+(11, 11)
+dc2e9a9d
+IsList = False
+(28, 29)
+dc433765
+IsList = True
+dc46ea44
+IsList = False
+(11, 11)
+dce56571
+IsList = False
+(11, 28)
+dd2401ed
+IsList = False
+(7, 15)
+ddf7fa4f
+IsList = False
+(10, 10)
+de1cd16c
+IsList = False
+(18, 19)
+de493100
+IsList = False
+(30, 30)
+ded97339
+IsList = False
+(10, 10)
+df8cc377
+IsList = False
+(22, 26)
+df978a02
+IsList = False
+(16, 16)
+df9fd884
+IsList = False
+(8, 8)
+e048c9ed
+IsList = False
+(10, 12)
+e0fb7511
+IsList = False
+(13, 13)
+e133d23d
+IsList = False
+(3, 7)
+e179c5f4
+IsList = False
+(10, 5)
+e1baa8a4
+IsList = False
+(15, 15)
+e1d2900e
+IsList = False
+(30, 30)
+e2092e0c
+IsList = False
+(15, 15)
+e21a174a
+IsList = True
+e21d9049
+IsList = False
+(20, 20)
+e26a3af2
+IsList = False
+(15, 15)
+e345f17b
+IsList = True
+e3497940
+IsList = False
+(10, 9)
+e39e9282
+IsList = False
+(13, 13)
+e3f79277
+IsList = False
+(6, 6)
+e3fe1151
+IsList = False
+(5, 5)
+e4075551
+IsList = False
+(16, 15)
+e40b9e2f
+IsList = False
+(10, 10)
+e41c6fd3
+IsList = False
+(17, 30)
+e45ef808
+IsList = False
+(12, 12)
+e4888269
+IsList = True
+e48d4e1a
+IsList = False
+(10, 10)
+e4941b18
+IsList = False
+(19, 19)
+e5062a87
+IsList = False
+(10, 10)
+e509e548
+IsList = False
+(14, 16)
+e50d258f
+IsList = False
+(10, 10)
+e57337a4
+IsList = False
+(15, 15)
+e5790162
+IsList = False
+(10, 12)
+e5c44e8f
+IsList = False
+(11, 11)
+e619ca6e
+IsList = False
+(29, 28)
+e633a9e5
+IsList = False
+(3, 3)
+e6721834
+IsList = False
+(24, 12)
+e681b708
+IsList = False
+(26, 26)
+e69241bd
+IsList = False
+(9, 9)
+e6de6e8f
+IsList = False
+(2, 12)
+e729b7be
+IsList = False
+(19, 19)
+e73095fd
+IsList = False
+(16, 18)
+e734a0e8
+IsList = False
+(17, 17)
+e74e1818
+IsList = False
+(15, 15)
+e760a62e
+IsList = False
+(28, 28)
+e7639916
+IsList = False
+(14, 13)
+e76a88a6
+IsList = False
+(10, 10)
+e78887d1
+IsList = False
+(9, 15)
+e7a25a18
+IsList = False
+(14, 14)
+e7b06bea
+IsList = False
+(9, 9)
+e7dd8335
+IsList = False
+(9, 11)
+e84fef15
+IsList = False
+(29, 29)
+e8593010
+IsList = False
+(10, 10)
+e872b94a
+IsList = False
+(9, 10)
+e88171ec
+IsList = False
+(21, 21)
+e8dc4411
+IsList = False
+(18, 16)
+e9614598
+IsList = True
+e98196ab
+IsList = False
+(11, 11)
+e99362f0
+IsList = False
+(11, 9)
+e9ac8c9e
+IsList = False
+(15, 15)
+e9afcf9a
+IsList = False
+(2, 6)
+e9b4f6fc
+IsList = False
+(13, 13)
+e9bb6954
+IsList = False
+(19, 19)
+e9c9d9a1
+IsList = False
+(15, 15)
+e9fc42f2
+IsList = True
+ea32f347
+IsList = False
+(10, 10)
+ea786f4a
+IsList = False
+(11, 11)
+ea959feb
+IsList = False
+(22, 25)
+ea9794b1
+IsList = False
+(10, 10)
+eb281b96
+IsList = False
+(5, 17)
+eb5a1d5d
+IsList = False
+(26, 27)
+ec883f72
+IsList = False
+(12, 12)
+ecaa0ec1
+IsList = False
+(11, 11)
+ecb67b6d
+IsList = False
+(16, 19)
+ecdecbb3
+IsList = False
+(17, 19)
+ed36ccf7
+IsList = False
+(3, 3)
+ed74f2f2
+IsList = False
+(5, 9)
+ed98d772
+IsList = False
+(3, 3)
+edcc2ff0
+IsList = False
+(20, 10)
+ef135b50
+IsList = False
+(10, 10)
+ef26cbf6
+IsList = False
+(11, 7)
+f0100645
+IsList = False
+(9, 9)
+f0afb749
+IsList = False
+(3, 3)
+f0df5ff0
+IsList = False
+(15, 15)
+f0f8a26d
+IsList = False
+(13, 13)
+f15e1fac
+IsList = False
+(12, 17)
+f18ec8cc
+IsList = True
+f1bcbc2c
+IsList = False
+(10, 10)
+f1cefba8
+IsList = False
+(19, 18)
+f21745ec
+IsList = False
+(23, 22)
+f25fbde4
+IsList = False
+(9, 9)
+f25ffba3
+IsList = False
+(10, 4)
+f2829549
+IsList = False
+(4, 7)
+f28a3cbb
+IsList = False
+(9, 9)
+f341894c
+IsList = False
+(18, 18)
+f35d900a
+IsList = False
+(17, 18)
+f3b10344
+IsList = False
+(30, 29)
+f3cdc58f
+IsList = False
+(10, 10)
+f3e14006
+IsList = True
+f3e62deb
+IsList = True
+f45f5ca7
+IsList = False
+(10, 10)
+f5aa3634
+IsList = False
+(15, 15)
+f5b8619d
+IsList = False
+(4, 4)
+Exception... boolean index did not match indexed array along axis 0; size of axis is 4 but size of corresponding boolean axis is 2
+f5c89df1
+IsList = False
+(13, 13)
+f76d97a5
+IsList = False
+(5, 5)
+f823c43c
+IsList = False
+(16, 16)
+f83cb3f6
+IsList = False
+(10, 15)
+f8a8fe49
+IsList = False
+(15, 15)
+f8b3ba0a
+IsList = False
+(15, 13)
+f8be4b64
+IsList = False
+(19, 19)
+f8c80d96
+IsList = False
+(10, 10)
+f8cc533f
+IsList = True
+f8f52ecc
+IsList = True
+f8ff0b80
+IsList = False
+(12, 12)
+f9012d9b
+IsList = False
+(7, 7)
+f9a67cb5
+IsList = False
+(15, 14)
+f9d67f8b
+IsList = False
+(30, 30)
+fafd9572
+IsList = False
+(14, 12)
+fafffa47
+IsList = False
+(6, 3)
+fb791726
+IsList = False
+(4, 4)
+fbf15a0b
+IsList = True
+fc10701f
+IsList = False
+(26, 26)
+fc4aaf52
+IsList = False
+(16, 16)
+fc754716
+IsList = False
+(9, 7)
+fcb5c309
+IsList = False
+(17, 17)
+fcc82909
+IsList = False
+(10, 10)
+fd02da9e
+IsList = False
+(8, 8)
+fd096ab6
+IsList = False
+(30, 30)
+fd4b2b02
+IsList = False
+(16, 16)
+fe45cba4
+IsList = False
+(16, 16)
+fe9372f3
+IsList = False
+(30, 17)
+fea12743
+IsList = False
+(16, 11)
+feca6190
+IsList = False
+(1, 5)
+Exception... -  index 3 is out of bounds for axis 0 with size 3
+ff2825db
+IsList = True
+ff28f65a
+IsList = True
+ff72ca3e
+IsList = False
+(30, 20)
+ff805c23
+IsList = False
+(24, 24)
+Finished - 1000!

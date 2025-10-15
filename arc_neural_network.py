@@ -451,11 +451,11 @@ def _prepare_submission(t_input, key, val, submission, solutions, index=-1):
     submission[key].append({"attempt_1": pred, 'attempt_2': pred_2})
 
     try:
-        # if (np.array_equal(np.array(solutions[key][index]), pred)):
-        print("#"*80)
-        print("Success!")
-        pprint(pred)
-        print("#"*80)
+        if (np.array_equal(np.array(solutions[key][index]), pred)):
+            print("#"*80)
+            print("Success!")
+            pprint(pred)
+            print("#"*80)
     except Exception as e:
         print("Index:", index)
         print("EXX:", e)
@@ -499,7 +499,7 @@ def main():
     
     # Load data
     print("Loading ARC AGI data...")
-    first_problem_id, training_pairs, testing_inputs = load_arc_data('tc.json')
+    first_problem_id, training_pairs, testing_inputs = load_arc_data('training_challenges.json')
     print(f"Loaded {len(training_pairs)} training pairs and {len(testing_inputs)} test inputs.")
     submission = {}
     counter = 0
@@ -513,8 +513,8 @@ def main():
 
     solutions = {}
     
-    # with open('/kaggle/input/arc-prize-2025/arc-agi_training_solutions.json', 'r') as f:
-    #     solutions = json.load(f)
+    with open('training_solutions.json', 'r') as f:
+        solutions = json.load(f)
 
     # with open('/kaggle/input/arc-prize-2025/arc-agi_training_challenges.json', 'r') as f:
     #     tc = json.load(f)
