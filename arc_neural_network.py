@@ -40,6 +40,17 @@ class PatternTransformer:
         self.target_h = None
         self.target_w = None
         self.learned_background = None  # optional background color inferred from output_like
+        # Enhanced detectors
+        self.geom_found = False
+        self.geom_params = (0, False, False)  # rotation_k, flip_h, flip_v
+        self.scale_mode = None  # 'up', 'down', or None
+        self.scale_factor = 1
+        self.border_added = False
+        self.border_color = 0
+        self.border_thickness = (0, 0, 0, 0)  # top, bottom, left, right
+        self.pad_mode = None  # 'pad', 'crop', or None
+        self.pad_color = 0
+        self.pad_offsets = (0, 0)  # row_offset, col_offset
 
     @staticmethod
     def _mode(values: np.ndarray) -> int:
@@ -55,6 +66,111 @@ class PatternTransformer:
         if fv:
             x = np.flipud(x)
         return x
+
+    def _infer_color_map(self, src: np.ndarray, dst: np.ndarray) -> dict:
+        """Infer a per-color remapping from src to dst using majority mapping."""
+        mapping = {}
+        for color in range(10):
+            mask = src == color
+            if np.any(mask):
+                vals = dst[mask]
+                if vals.size:
+                    vals_u, counts = np.unique(vals, return_counts=True)
+                    mapping[color] = int(vals_u[np.argmax(counts)])
+        return mapping
+
+    def _apply_color_map(self, arr: np.ndarray, mapping: dict) -> np.ndarray:
+        if not mapping:
+            return arr
+        res = arr.copy()
+        for c, m in mapping.items():
+            res[arr == c] = m
+        return res
+
+    def _best_geom(self, a: np.ndarray, b: np.ndarray) -> tuple:
+        """Find rotation/flip that maximizes equality with b (same shape)."""
+        best = (0, False, False)
+        best_score = -1
+        for k in (0, 1, 2, 3):
+            rot = np.rot90(a, k)
+            for fh in (False, True):
+                for fv in (False, True):
+                    x = rot
+                    if fh:
+                        x = np.fliplr(x)
+                    if fv:
+                        x = np.flipud(x)
+                    if x.shape != b.shape:
+                        continue
+                    score = int(np.sum(x == b))
+                    if score > best_score:
+                        best_score = score
+                        best = (k, fh, fv)
+        return best, best_score
+
+    def _detect_integer_upscale(self, a: np.ndarray, b: np.ndarray) -> tuple:
+        """Detect if b is an integer upscaling of a via nearest-neighbor/kron. Returns (factor or 1, score)."""
+        best_f = 1
+        best_score = -1
+        for f in range(2, 6):
+            if a.shape[0] * f == b.shape[0] and a.shape[1] * f == b.shape[1]:
+                x = np.kron(a, np.ones((f, f), dtype=int))
+                score = int(np.sum(x == b))
+                if score > best_score:
+                    best_score = score
+                    best_f = f
+        return best_f, best_score
+
+    def _detect_integer_downscale(self, a: np.ndarray, b: np.ndarray) -> tuple:
+        """Detect if b is a block-mode downscale of a by integer factor. Returns (factor or 1, score)."""
+        best_f = 1
+        best_score = -1
+        for f in range(2, 6):
+            if a.shape[0] % f == 0 and a.shape[1] % f == 0 and a.shape[0] // f == b.shape[0] and a.shape[1] // f == b.shape[1]:
+                out = np.zeros_like(b)
+                for i in range(b.shape[0]):
+                    for j in range(b.shape[1]):
+                        block = a[i*f:(i+1)*f, j*f:(j+1)*f]
+                        vals, counts = np.unique(block, return_counts=True)
+                        out[i, j] = int(vals[np.argmax(counts)])
+                score = int(np.sum(out == b))
+                if score > best_score:
+                    best_score = score
+                    best_f = f
+        return best_f, best_score
+
+    def _detect_border_or_pad(self, a: np.ndarray, b: np.ndarray) -> tuple:
+        """Detect if b is padded version of a or cropped subwindow of a."""
+        ah, aw = a.shape
+        bh, bw = b.shape
+        if ah <= bh and aw <= bw:
+            best = None
+            best_score = -1
+            for r0 in range(bh - ah + 1):
+                for c0 in range(bw - aw + 1):
+                    canvas = np.full_like(b, fill_value=self.learned_background if self.learned_background is not None else 0)
+                    canvas[r0:r0+ah, c0:c0+aw] = a
+                    score = int(np.sum(canvas == b))
+                    if score > best_score:
+                        best_score = score
+                        best = ('pad', r0, c0)
+            if best is not None and best_score > 0:
+                _, r0, c0 = best
+                return {'mode': 'pad', 'offsets': (r0, c0), 'pad_color': int(self.learned_background if self.learned_background is not None else 0), 'score': best_score}
+        if ah >= bh and aw >= bw:
+            best = None
+            best_score = -1
+            for r0 in range(ah - bh + 1):
+                for c0 in range(aw - bw + 1):
+                    crop = a[r0:r0+bh, c0:c0+bw]
+                    score = int(np.sum(crop == b))
+                    if score > best_score:
+                        best_score = score
+                        best = ('crop', r0, c0)
+            if best is not None and best_score > 0:
+                _, r0, c0 = best
+                return {'mode': 'crop', 'offsets': (r0, c0), 'score': best_score}
+        return None
 
     def super_kron_broadcast(self, arr: np.ndarray) -> np.ndarray:
         b = arr > 0
@@ -235,15 +351,6 @@ class PatternTransformer:
             self.target_h = out_h
             self.target_w = out_w
     
-            # Search over geometric transforms and integer scaling to best align to self.output_like
-            rotations = [0, 1, 2, 3]  # multiples of 90 degrees
-            flip_options = [(False, False), (True, False), (False, True), (True, True)]
-    
-            # for rot in rotations:
-            #     for fh, fv in flip_options:
-            #         geom = apply_geom(self.input_like, rot, fh, fv)
-            #         gh, gw = geom.shape
-    
             self.skb = np.array_equal(self.output_like, self.super_kron_broadcast(self.input_like))
     
             if not self.skb:
@@ -258,6 +365,42 @@ class PatternTransformer:
                         # Apply the filling
                         _, has_diagonal_fillings = self.has_fillings_between_diagonals(self.input_like, boundary_element=3)
                         self.has_diagonal_fillings = has_diagonal_fillings
+                        if not self.has_diagonal_fillings:
+                            # Enhanced pattern inference
+                            # 1) Color map (when shapes match)
+                            self.color_map = None
+                            if self.input_like.shape == self.output_like.shape:
+                                cm = self._infer_color_map(self.input_like, self.output_like)
+                                if any(cm.get(c, c) != c for c in cm.keys()):
+                                    self.color_map = cm
+
+                            # 2) Geometric transform (after color map if any)
+                            ref_in = self._apply_color_map(self.input_like, self.color_map) if self.color_map else self.input_like
+                            if ref_in.shape == self.output_like.shape:
+                                (best_geom, score) = self._best_geom(ref_in, self.output_like)
+                                self.geom_params = best_geom
+                                self.geom_found = score > 0 and best_geom != (0, False, False)
+
+                            # 3) Integer scaling
+                            up_f, up_score = self._detect_integer_upscale(ref_in, self.output_like)
+                            down_f, down_score = self._detect_integer_downscale(ref_in, self.output_like)
+                            if max(up_score, down_score) > 0:
+                                if up_score >= down_score and up_f > 1:
+                                    self.scale_mode = 'up'
+                                    self.scale_factor = up_f
+                                elif down_score > up_score and down_f > 1:
+                                    self.scale_mode = 'down'
+                                    self.scale_factor = down_f
+
+                            # 4) Border/padding or cropping
+                            pad_or_crop = self._detect_border_or_pad(ref_in, self.output_like)
+                            if pad_or_crop is not None:
+                                self.pad_mode = pad_or_crop['mode']
+                                self.pad_offsets = pad_or_crop['offsets']
+                                if self.pad_mode == 'pad':
+                                    self.pad_color = pad_or_crop['pad_color']
+    
+
         except Exception as e:
             print("Exception... - ", e)
 
@@ -267,6 +410,7 @@ class PatternTransformer:
         try:
             input = np.array(input_matrix)
             input_like = self.input_like
+            pred_work = input.copy()
 
             b = output_like == input_like[0][0]
 
@@ -369,6 +513,46 @@ class PatternTransformer:
                     col_start, col_end = quad['cols']
                     pred[row_start+1:row_end, col_start+1:col_end] = 4
                 return pred
+            # Apply learned color map
+            elif self.color_map:
+                pred_work = self._apply_color_map(pred_work, self.color_map)
+
+            # Apply learned geometry
+            if self.geom_found:
+                rot_k, fh, fv = self.geom_params
+                pred_work = self.apply_geom(pred_work, rot_k, fh, fv)
+
+            # Apply integer scaling
+            if self.scale_mode == 'up' and self.scale_factor > 1:
+                pred_work = np.kron(pred_work, np.ones((self.scale_factor, self.scale_factor), dtype=int))
+            elif self.scale_mode == 'down' and self.scale_factor > 1:
+                bh = pred_work.shape[0] // self.scale_factor
+                bw = pred_work.shape[1] // self.scale_factor
+                out = np.zeros((bh, bw), dtype=int)
+                for i in range(bh):
+                    for j in range(bw):
+                        block = pred_work[i*self.scale_factor:(i+1)*self.scale_factor, j*self.scale_factor:(j+1)*self.scale_factor]
+                        vals, counts = np.unique(block, return_counts=True)
+                        out[i, j] = int(vals[np.argmax(counts)])
+                pred_work = out
+
+            # Apply padding or crop
+            if self.pad_mode == 'pad':
+                bh, bw = output_like.shape
+                canvas = np.full((bh, bw), fill_value=self.pad_color, dtype=int)
+                r0, c0 = self.pad_offsets
+                ah, aw = pred_work.shape
+                if r0 + ah <= bh and c0 + aw <= bw:
+                    canvas[r0:r0+ah, c0:c0+aw] = pred_work
+                    pred_work = canvas
+            elif self.pad_mode == 'crop':
+                bh, bw = output_like.shape
+                r0, c0 = self.pad_offsets
+                pred_work = pred_work[r0:r0+bh, c0:c0+bw]
+
+            # Early return if already matches reasonably
+            if pred_work.shape == output_like.shape and np.sum(pred_work == output_like) > 0:
+                return pred_work
             else:
                 return np.zeros([self.target_h, self.target_w])
         except Exception as e:
