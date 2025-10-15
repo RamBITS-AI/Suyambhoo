@@ -1,4 +1,5 @@
 import json
+import os
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -51,6 +52,8 @@ class PatternTransformer:
         self.pad_mode = None  # 'pad', 'crop', or None
         self.pad_color = 0
         self.pad_offsets = (0, 0)  # row_offset, col_offset
+        # Composed pipeline of learned steps (executed in order during predict)
+        self.pipeline = []  # list of (op_name, params)
 
     @staticmethod
     def _mode(values: np.ndarray) -> int:
@@ -171,6 +174,44 @@ class PatternTransformer:
                 _, r0, c0 = best
                 return {'mode': 'crop', 'offsets': (r0, c0), 'score': best_score}
         return None
+
+    def _score_equal(self, a: np.ndarray, b: np.ndarray) -> int:
+        if a.shape != b.shape:
+            return -1
+        return int(np.sum(a == b))
+
+    def _apply_translation(self, a: np.ndarray, dr: int, dc: int, fill_color: int) -> np.ndarray:
+        ah, aw = a.shape
+        canvas = np.full((ah, aw), fill_value=fill_color, dtype=int)
+        # destination coordinates
+        r0 = max(0, dr)
+        c0 = max(0, dc)
+        r1 = min(ah, ah + dr)
+        c1 = min(aw, aw + dc)
+        # source coordinates
+        sr0 = max(0, -dr)
+        sc0 = max(0, -dc)
+        sr1 = sr0 + (r1 - r0)
+        sc1 = sc0 + (c1 - c0)
+        if r0 < r1 and c0 < c1:
+            canvas[r0:r1, c0:c1] = a[sr0:sr1, sc0:sc1]
+        return canvas
+
+    def _detect_translation(self, a: np.ndarray, b: np.ndarray, max_shift: int = 3) -> tuple:
+        """Detect translation (no wrap) with background fill. Returns (dr, dc, score)."""
+        if a.shape != b.shape:
+            return (0, 0, -1)
+        best = (0, 0)
+        best_score = -1
+        fill_color = int(self.learned_background if self.learned_background is not None else 0)
+        for dr in range(-max_shift, max_shift + 1):
+            for dc in range(-max_shift, max_shift + 1):
+                moved = self._apply_translation(a, dr, dc, fill_color)
+                score = self._score_equal(moved, b)
+                if score > best_score:
+                    best_score = score
+                    best = (dr, dc)
+        return best[0], best[1], best_score
 
     def super_kron_broadcast(self, arr: np.ndarray) -> np.ndarray:
         b = arr > 0
@@ -366,39 +407,92 @@ class PatternTransformer:
                         _, has_diagonal_fillings = self.has_fillings_between_diagonals(self.input_like, boundary_element=3)
                         self.has_diagonal_fillings = has_diagonal_fillings
                         if not self.has_diagonal_fillings:
-                            # Enhanced pattern inference
-                            # 1) Color map (when shapes match)
-                            self.color_map = None
-                            if self.input_like.shape == self.output_like.shape:
-                                cm = self._infer_color_map(self.input_like, self.output_like)
-                                if any(cm.get(c, c) != c for c in cm.keys()):
-                                    self.color_map = cm
+                            # Greedy, score-driven pipeline construction
+                            self.pipeline = []
+                            work = self.input_like.copy()
 
-                            # 2) Geometric transform (after color map if any)
-                            ref_in = self._apply_color_map(self.input_like, self.color_map) if self.color_map else self.input_like
-                            if ref_in.shape == self.output_like.shape:
-                                (best_geom, score) = self._best_geom(ref_in, self.output_like)
-                                self.geom_params = best_geom
-                                self.geom_found = score > 0 and best_geom != (0, False, False)
+                            # Candidate 1: Color remap
+                            best_gain = 0
+                            base_score = self._score_equal(work, self.output_like)
+                            chosen = None
+                            if work.shape == self.output_like.shape:
+                                cm = self._infer_color_map(work, self.output_like)
+                                if cm:
+                                    remapped = self._apply_color_map(work, cm)
+                                    score = self._score_equal(remapped, self.output_like)
+                                    if score - base_score > best_gain:
+                                        best_gain = score - base_score
+                                        chosen = ('color_map', cm, remapped, score)
+                            if chosen is not None:
+                                self.pipeline.append(('color_map', chosen[1]))
+                                work = chosen[2]
+                                base_score = chosen[3]
+                                self.color_map = chosen[1]
 
-                            # 3) Integer scaling
-                            up_f, up_score = self._detect_integer_upscale(ref_in, self.output_like)
-                            down_f, down_score = self._detect_integer_downscale(ref_in, self.output_like)
-                            if max(up_score, down_score) > 0:
-                                if up_score >= down_score and up_f > 1:
-                                    self.scale_mode = 'up'
-                                    self.scale_factor = up_f
-                                elif down_score > up_score and down_f > 1:
-                                    self.scale_mode = 'down'
-                                    self.scale_factor = down_f
+                            # Candidate 2: Geometry (rot/flip)
+                            if work.shape == self.output_like.shape:
+                                (best_geom, gscore) = self._best_geom(work, self.output_like)
+                                if gscore - base_score > 0 and best_geom != (0, False, False):
+                                    work = self.apply_geom(work, *best_geom)
+                                    base_score = gscore
+                                    self.pipeline.append(('geom', best_geom))
+                                    self.geom_found = True
+                                    self.geom_params = best_geom
 
-                            # 4) Border/padding or cropping
-                            pad_or_crop = self._detect_border_or_pad(ref_in, self.output_like)
+                            # Candidate 3: Integer scale (up/down)
+                            up_f, up_score = self._detect_integer_upscale(work, self.output_like)
+                            down_f, down_score = self._detect_integer_downscale(work, self.output_like)
+                            if up_score >= down_score and up_f > 1:
+                                work = np.kron(work, np.ones((up_f, up_f), dtype=int))
+                                base_score = self._score_equal(work, self.output_like) if work.shape == self.output_like.shape else -1
+                                self.pipeline.append(('scale', ('up', up_f)))
+                                self.scale_mode = 'up'
+                                self.scale_factor = up_f
+                            elif down_score > up_score and down_f > 1:
+                                bh = work.shape[0] // down_f
+                                bw = work.shape[1] // down_f
+                                out = np.zeros((bh, bw), dtype=int)
+                                for i in range(bh):
+                                    for j in range(bw):
+                                        block = work[i*down_f:(i+1)*down_f, j*down_f:(j+1)*down_f]
+                                        vals, counts = np.unique(block, return_counts=True)
+                                        out[i, j] = int(vals[np.argmax(counts)])
+                                work = out
+                                base_score = self._score_equal(work, self.output_like) if work.shape == self.output_like.shape else -1
+                                self.pipeline.append(('scale', ('down', down_f)))
+                                self.scale_mode = 'down'
+                                self.scale_factor = down_f
+
+                            # Candidate 4: Pad/Crop to reach target shape
+                            pad_or_crop = self._detect_border_or_pad(work, self.output_like)
                             if pad_or_crop is not None:
-                                self.pad_mode = pad_or_crop['mode']
-                                self.pad_offsets = pad_or_crop['offsets']
-                                if self.pad_mode == 'pad':
-                                    self.pad_color = pad_or_crop['pad_color']
+                                if pad_or_crop['mode'] == 'pad':
+                                    r0, c0 = pad_or_crop['offsets']
+                                    pad_color = pad_or_crop['pad_color']
+                                    self.pipeline.append(('pad', (r0, c0, pad_color, self.output_like.shape)))
+                                    canvas = np.full(self.output_like.shape, fill_value=pad_color, dtype=int)
+                                    ah, aw = work.shape
+                                    canvas[r0:r0+ah, c0:c0+aw] = work
+                                    work = canvas
+                                    self.pad_mode = 'pad'
+                                    self.pad_offsets = (r0, c0)
+                                    self.pad_color = pad_color
+                                elif pad_or_crop['mode'] == 'crop':
+                                    r0, c0 = pad_or_crop['offsets']
+                                    self.pipeline.append(('crop', (r0, c0, self.output_like.shape)))
+                                    bh, bw = self.output_like.shape
+                                    work = work[r0:r0+bh, c0:c0+bw]
+                                    self.pad_mode = 'crop'
+                                    self.pad_offsets = (r0, c0)
+
+                            # Candidate 5: Translation within same shape (no wrap)
+                            if work.shape == self.output_like.shape:
+                                dr, dc, tscore = self._detect_translation(work, self.output_like)
+                                if tscore - base_score > 0 and (dr != 0 or dc != 0):
+                                    fill_color = int(self.learned_background if self.learned_background is not None else 0)
+                                    work = self._apply_translation(work, dr, dc, fill_color)
+                                    base_score = tscore
+                                    self.pipeline.append(('translate', (dr, dc, fill_color)))
     
 
         except Exception as e:
@@ -513,47 +607,45 @@ class PatternTransformer:
                     col_start, col_end = quad['cols']
                     pred[row_start+1:row_end, col_start+1:col_end] = 4
                 return pred
-            # Apply learned color map
-            elif self.color_map:
-                pred_work = self._apply_color_map(pred_work, self.color_map)
-
-            # Apply learned geometry
-            if self.geom_found:
-                rot_k, fh, fv = self.geom_params
-                pred_work = self.apply_geom(pred_work, rot_k, fh, fv)
-
-            # Apply integer scaling
-            if self.scale_mode == 'up' and self.scale_factor > 1:
-                pred_work = np.kron(pred_work, np.ones((self.scale_factor, self.scale_factor), dtype=int))
-            elif self.scale_mode == 'down' and self.scale_factor > 1:
-                bh = pred_work.shape[0] // self.scale_factor
-                bw = pred_work.shape[1] // self.scale_factor
-                out = np.zeros((bh, bw), dtype=int)
-                for i in range(bh):
-                    for j in range(bw):
-                        block = pred_work[i*self.scale_factor:(i+1)*self.scale_factor, j*self.scale_factor:(j+1)*self.scale_factor]
-                        vals, counts = np.unique(block, return_counts=True)
-                        out[i, j] = int(vals[np.argmax(counts)])
-                pred_work = out
-
-            # Apply padding or crop
-            if self.pad_mode == 'pad':
-                bh, bw = output_like.shape
-                canvas = np.full((bh, bw), fill_value=self.pad_color, dtype=int)
-                r0, c0 = self.pad_offsets
-                ah, aw = pred_work.shape
-                if r0 + ah <= bh and c0 + aw <= bw:
-                    canvas[r0:r0+ah, c0:c0+aw] = pred_work
-                    pred_work = canvas
-            elif self.pad_mode == 'crop':
-                bh, bw = output_like.shape
-                r0, c0 = self.pad_offsets
-                pred_work = pred_work[r0:r0+bh, c0:c0+bw]
-
-            # Early return if already matches reasonably
-            if pred_work.shape == output_like.shape and np.sum(pred_work == output_like) > 0:
-                return pred_work
             else:
+                # Replay learned pipeline in order
+                for op, params in self.pipeline:
+                    if op == 'color_map':
+                        pred_work = self._apply_color_map(pred_work, params)
+                    elif op == 'geom':
+                        rot_k, fh, fv = params
+                        pred_work = self.apply_geom(pred_work, rot_k, fh, fv)
+                    elif op == 'scale':
+                        mode, factor = params
+                        if mode == 'up':
+                            pred_work = np.kron(pred_work, np.ones((factor, factor), dtype=int))
+                        else:
+                            bh = pred_work.shape[0] // factor
+                            bw = pred_work.shape[1] // factor
+                            out = np.zeros((bh, bw), dtype=int)
+                            for i in range(bh):
+                                for j in range(bw):
+                                    block = pred_work[i*factor:(i+1)*factor, j*factor:(j+1)*factor]
+                                    vals, counts = np.unique(block, return_counts=True)
+                                    out[i, j] = int(vals[np.argmax(counts)])
+                            pred_work = out
+                    elif op == 'pad':
+                        r0, c0, pad_color, target_shape = params
+                        canvas = np.full(target_shape, fill_value=pad_color, dtype=int)
+                        ah, aw = pred_work.shape
+                        if r0 + ah <= target_shape[0] and c0 + aw <= target_shape[1]:
+                            canvas[r0:r0+ah, c0:c0+aw] = pred_work
+                        pred_work = canvas
+                    elif op == 'crop':
+                        r0, c0, target_shape = params
+                        bh, bw = target_shape
+                        pred_work = pred_work[r0:r0+bh, c0:c0+bw]
+                    elif op == 'translate':
+                        dr, dc, fill = params
+                        pred_work = self._apply_translation(pred_work, dr, dc, fill)
+
+                if pred_work.shape == output_like.shape:
+                    return pred_work
                 return np.zeros([self.target_h, self.target_w])
         except Exception as e:
             print("Exception! - ", e)
@@ -683,7 +775,8 @@ def main():
     
     # Load data
     print("Loading ARC AGI data...")
-    first_problem_id, training_pairs, testing_inputs = load_arc_data('training_challenges.json')
+    challenges_path = 'training_challenges.json' if os.path.exists('training_challenges_trimmed.json') else 'training_challenges.json'
+    first_problem_id, training_pairs, testing_inputs = load_arc_data(challenges_path)
     print(f"Loaded {len(training_pairs)} training pairs and {len(testing_inputs)} test inputs.")
     submission = {}
     counter = 0
@@ -697,7 +790,8 @@ def main():
 
     solutions = {}
     
-    with open('training_solutions.json', 'r') as f:
+    solutions_path = 'training_solutions.json' if os.path.exists('training_solutions_trimmed.json') else 'training_solutions.json'
+    with open(solutions_path, 'r') as f:
         solutions = json.load(f)
 
     # with open('/kaggle/input/arc-prize-2025/arc-agi_training_challenges.json', 'r') as f:
